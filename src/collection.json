@@ -117,6 +117,12 @@
       "description": "Create a Nest resource.",
       "schema": "./lib/resource/schema.json",
       "aliases": ["res"]
+    },
+    "main": {
+      "factory": "./lib/main/main.factory#main",
+      "description": "Create 4i main resource.",
+      "schema": "./lib/main/schema.json",
+      "aliases": ["m"]
     }
   }
 }
