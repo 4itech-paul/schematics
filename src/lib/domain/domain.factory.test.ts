@@ -18,9 +18,7 @@ describe('Domain Factory', () => {
         crud: true,
         type: 'graphql-code-first',
       };
-      const tree = await runner
-        .runSchematicAsync('domain', options)
-        .toPromise();
+      const tree = await runner.runSchematic('domain', options);
       const files = tree.files;
       expect(files).toEqual([
         '/users/users.module.ts',
@@ -38,9 +36,7 @@ describe('Domain Factory', () => {
           crud: false,
           type: 'graphql-code-first',
         };
-        const tree = await runner
-          .runSchematicAsync('domain', options)
-          .toPromise();
+        const tree = await runner.runSchematic('domain', options);
         const files = tree.files;
         expect(files).toEqual([
           '/users/users.module.ts',
@@ -57,9 +53,7 @@ describe('Domain Factory', () => {
           crud: false,
           type: 'graphql-code-first',
         };
-        const tree = await runner
-          .runSchematicAsync('domain', options)
-          .toPromise();
+        const tree = await runner.runSchematic('domain', options);
         const files = tree.files;
         expect(files).toEqual([
           '/users/users.module.ts',
@@ -79,7 +73,7 @@ describe('Domain Factory', () => {
     let tree: UnitTestTree;
 
     beforeAll(async () => {
-      tree = await runner.runSchematicAsync('domain', options).toPromise();
+      tree = await runner.runSchematic('domain', options);
     });
 
     it('should generate "UsersResolver" class', () => {
