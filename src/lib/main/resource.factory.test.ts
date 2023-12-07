@@ -15,6 +15,7 @@ describe('Resource Factory', () => {
     it('should generate appropriate files ', async () => {
       const options: ResourceOptions = {
         name: 'users',
+        type: 'rest',
       };
       const tree = await runner
         .runSchematicAsync('resource', options)
@@ -26,14 +27,20 @@ describe('Resource Factory', () => {
         '/users/users.module.ts',
         '/users/users.service.spec.ts',
         '/users/users.service.ts',
-        '/users/dto/create-user.dto.ts',
-        '/users/dto/update-user.dto.ts',
-        '/users/entities/user.entity.ts',
+        '/users/args/user-page.args.ts',
+        '/users/input/create-user.dto.ts',
+        '/users/input/update-user.dto.ts',
+        '/users/output/create-user.output.ts',
+        '/users/output/remove-user.output.ts',
+        '/users/output/update-user.output.ts',
+        '/users/type/user.type.ts',
+        '/users/type/user-page.type.ts',
       ]);
     });
     it("should keep underscores in resource's path and file name", async () => {
       const options: ResourceOptions = {
         name: '_users',
+        type: 'rest',
       };
       const tree = await runner
         .runSchematicAsync('resource', options)
@@ -45,15 +52,21 @@ describe('Resource Factory', () => {
         '/_users/_users.module.ts',
         '/_users/_users.service.spec.ts',
         '/_users/_users.service.ts',
-        '/_users/dto/create-_user.dto.ts',
-        '/_users/dto/update-_user.dto.ts',
-        '/_users/entities/_user.entity.ts',
+        '/_users/args/_user-page.args.ts',
+        '/_users/input/create-_user.dto.ts',
+        '/_users/input/update-_user.dto.ts',
+        '/_users/output/create-_user.output.ts',
+        '/_users/output/remove-_user.output.ts',
+        '/_users/output/update-_user.output.ts',
+        '/_users/type/_user.type.ts',
+        '/_users/type/_user-page.type.ts',
       ]);
     });
     describe('when "crud" option is not enabled', () => {
       it('should generate appropriate files (without dtos)', async () => {
         const options: ResourceOptions = {
           name: 'users',
+          type: 'rest',
           crud: false,
         };
         const tree = await runner
@@ -66,6 +79,10 @@ describe('Resource Factory', () => {
           '/users/users.module.ts',
           '/users/users.service.spec.ts',
           '/users/users.service.ts',
+          '/users/args/user-page.args.ts',
+          '/users/output/create-user.output.ts',
+          '/users/output/remove-user.output.ts',
+          '/users/output/update-user.output.ts',
         ]);
       });
     });
@@ -73,6 +90,7 @@ describe('Resource Factory', () => {
       it('should generate appropriate files (without dtos)', async () => {
         const options: ResourceOptions = {
           name: 'users',
+          type: 'rest',
           spec: false,
           crud: false,
         };
@@ -84,6 +102,10 @@ describe('Resource Factory', () => {
           '/users/users.controller.ts',
           '/users/users.module.ts',
           '/users/users.service.ts',
+          '/users/args/user-page.args.ts',
+          '/users/output/create-user.output.ts',
+          '/users/output/remove-user.output.ts',
+          '/users/output/update-user.output.ts',
         ]);
       });
     });
@@ -92,6 +114,7 @@ describe('Resource Factory', () => {
   describe('[REST API]', () => {
     const options: ResourceOptions = {
       name: 'users',
+      type: 'rest',
       isSwaggerInstalled: true,
     };
 
@@ -105,8 +128,8 @@ describe('Resource Factory', () => {
       expect(tree.readContent('/users/users.controller.ts'))
         .toEqual(`import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './input/create-user.dto';
+import { UpdateUserDto } from './input/update-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -143,11 +166,11 @@ export class UsersController {
     it('should generate "UsersService" class', () => {
       expect(tree.readContent('/users/users.service.ts'))
         .toEqual(`import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './input/create-user.dto';
+import { UpdateUserDto } from './input/update-user.dto';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';
   }
@@ -174,8 +197,9 @@ export class UsersService {
     it('should generate "UsersModule" class', () => {
       expect(tree.readContent('/users/users.module.ts'))
         .toEqual(`import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
+
 import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
 
 @Module({
   controllers: [UsersController],
@@ -186,20 +210,20 @@ export class UsersModule {}
     });
 
     it('should generate "User" class', () => {
-      expect(tree.readContent('/users/entities/user.entity.ts'))
-        .toEqual(`export class User {}
+      expect(tree.readContent('/users/type/user.type.ts'))
+        .toEqual(`export class UserType {}
 `);
     });
 
     it('should generate "CreateUserDto" class', () => {
-      expect(tree.readContent('/users/dto/create-user.dto.ts')).toEqual(
+      expect(tree.readContent('/users/input/create-user.dto.ts')).toEqual(
         `export class CreateUserDto {}
 `,
       );
     });
 
     it('should generate "UpdateUserDto" class', () => {
-      expect(tree.readContent('/users/dto/update-user.dto.ts'))
+      expect(tree.readContent('/users/input/update-user.dto.ts'))
         .toEqual(`import { PartialType } from '@nestjs/swagger';
 import { CreateUserDto } from './create-user.dto';
 
@@ -235,6 +259,7 @@ describe('UsersController', () => {
     it('should generate "UsersService" spec file', () => {
       expect(tree.readContent('/users/users.service.spec.ts'))
         .toEqual(`import { Test, TestingModule } from '@nestjs/testing';
+
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
@@ -245,7 +270,9 @@ describe('UsersService', () => {
       providers: [UsersService],
     }).compile();
 
-    service = module.get<UsersService>(UsersService);
+    service = module.get<UsersService>(
+      UsersService,
+    );
   });
 
   it('should be defined', () => {
@@ -259,6 +286,7 @@ describe('UsersService', () => {
   describe('[REST API - with "crud" disabled]', () => {
     const options: ResourceOptions = {
       name: 'users',
+      type: 'rest',
       crud: false,
       spec: false,
     };
@@ -286,15 +314,16 @@ export class UsersController {
         .toEqual(`import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class UsersService {}
+export class UserService {}
 `);
     });
 
     it('should generate "UsersModule" class', () => {
       expect(tree.readContent('/users/users.module.ts'))
         .toEqual(`import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
+
 import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
 
 @Module({
   controllers: [UsersController],
@@ -305,15 +334,15 @@ export class UsersModule {}
     });
 
     it('should not generate "User" class', () => {
-      expect(tree.readContent('/users/entities/user.entity.ts')).toEqual('');
+      expect(tree.readContent('/users/type/user.type.ts')).toEqual('');
     });
 
     it('should not generate "CreateUserDto" class', () => {
-      expect(tree.readContent('/users/dto/create-user.dto.ts')).toEqual('');
+      expect(tree.readContent('/users/input/create-user.dto.ts')).toEqual('');
     });
 
     it('should not generate "UpdateUserDto" class', () => {
-      expect(tree.readContent('/users/dto/update-user.dto.ts')).toEqual('');
+      expect(tree.readContent('/users/input/update-user.dto.ts')).toEqual('');
     });
   });
 
@@ -333,9 +362,14 @@ export class UsersModule {}
         '/users/users.module.ts',
         '/users/users.service.spec.ts',
         '/users/users.service.ts',
-        '/users/dto/create-user.dto.ts',
-        '/users/dto/update-user.dto.ts',
-        '/users/entities/user.entity.ts',
+        '/users/args/user-page.args.ts',
+        '/users/input/create-user.dto.ts',
+        '/users/input/update-user.dto.ts',
+        '/users/output/create-user.output.ts',
+        '/users/output/remove-user.output.ts',
+        '/users/output/update-user.output.ts',
+        '/users/type/user.type.ts',
+        '/users/type/user-page.type.ts',
       ]);
     });
     describe('when "crud" option is not enabled', () => {
@@ -355,6 +389,10 @@ export class UsersModule {}
           '/users/users.module.ts',
           '/users/users.service.spec.ts',
           '/users/users.service.ts',
+          '/users/args/user-page.args.ts',
+          '/users/output/create-user.output.ts',
+          '/users/output/remove-user.output.ts',
+          '/users/output/update-user.output.ts',
         ]);
       });
     });
@@ -374,6 +412,10 @@ export class UsersModule {}
           '/users/users.controller.ts',
           '/users/users.module.ts',
           '/users/users.service.ts',
+          '/users/args/user-page.args.ts',
+          '/users/output/create-user.output.ts',
+          '/users/output/remove-user.output.ts',
+          '/users/output/update-user.output.ts',
         ]);
       });
     });
@@ -396,8 +438,8 @@ export class UsersModule {}
         .toEqual(`import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './input/create-user.dto';
+import { UpdateUserDto } from './input/update-user.dto';
 
 @Controller()
 export class UsersController {
@@ -434,11 +476,11 @@ export class UsersController {
     it('should generate "UsersService" class', () => {
       expect(tree.readContent('/users/users.service.ts'))
         .toEqual(`import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './input/create-user.dto';
+import { UpdateUserDto } from './input/update-user.dto';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';
   }
@@ -465,8 +507,9 @@ export class UsersService {
     it('should generate "UsersModule" class', () => {
       expect(tree.readContent('/users/users.module.ts'))
         .toEqual(`import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
+
 import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
 
 @Module({
   controllers: [UsersController],
@@ -477,20 +520,20 @@ export class UsersModule {}
     });
 
     it('should generate "User" class', () => {
-      expect(tree.readContent('/users/entities/user.entity.ts'))
-        .toEqual(`export class User {}
+      expect(tree.readContent('/users/type/user.type.ts'))
+        .toEqual(`export class UserType {}
 `);
     });
 
     it('should generate "CreateUserDto" class', () => {
-      expect(tree.readContent('/users/dto/create-user.dto.ts')).toEqual(
+      expect(tree.readContent('/users/input/create-user.dto.ts')).toEqual(
         `export class CreateUserDto {}
 `,
       );
     });
 
     it('should generate "UpdateUserDto" class', () => {
-      expect(tree.readContent('/users/dto/update-user.dto.ts'))
+      expect(tree.readContent('/users/input/update-user.dto.ts'))
         .toEqual(`import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
 
@@ -528,6 +571,7 @@ describe('UsersController', () => {
     it('should generate "UsersService" spec file', () => {
       expect(tree.readContent('/users/users.service.spec.ts'))
         .toEqual(`import { Test, TestingModule } from '@nestjs/testing';
+
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
@@ -538,7 +582,9 @@ describe('UsersService', () => {
       providers: [UsersService],
     }).compile();
 
-    service = module.get<UsersService>(UsersService);
+    service = module.get<UsersService>(
+      UsersService,
+    );
   });
 
   it('should be defined', () => {
@@ -580,15 +626,16 @@ export class UsersController {
         .toEqual(`import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class UsersService {}
+export class UserService {}
 `);
     });
 
     it('should generate "UsersModule" class', () => {
       expect(tree.readContent('/users/users.module.ts'))
         .toEqual(`import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
+
 import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
 
 @Module({
   controllers: [UsersController],
@@ -599,15 +646,15 @@ export class UsersModule {}
     });
 
     it('should not generate "User" class', () => {
-      expect(tree.readContent('/users/entities/user.entity.ts')).toEqual('');
+      expect(tree.readContent('/users/type/user.type.ts')).toEqual('');
     });
 
     it('should not generate "CreateUserDto" class', () => {
-      expect(tree.readContent('/users/dto/create-user.dto.ts')).toEqual('');
+      expect(tree.readContent('/users/input/create-user.dto.ts')).toEqual('');
     });
 
     it('should not generate "UpdateUserDto" class', () => {
-      expect(tree.readContent('/users/dto/update-user.dto.ts')).toEqual('');
+      expect(tree.readContent('/users/input/update-user.dto.ts')).toEqual('');
     });
   });
 
@@ -627,9 +674,14 @@ export class UsersModule {}
         '/users/users.module.ts',
         '/users/users.service.spec.ts',
         '/users/users.service.ts',
-        '/users/dto/create-user.dto.ts',
-        '/users/dto/update-user.dto.ts',
-        '/users/entities/user.entity.ts',
+        '/users/args/user-page.args.ts',
+        '/users/input/create-user.dto.ts',
+        '/users/input/update-user.dto.ts',
+        '/users/output/create-user.output.ts',
+        '/users/output/remove-user.output.ts',
+        '/users/output/update-user.output.ts',
+        '/users/type/user.type.ts',
+        '/users/type/user-page.type.ts',
       ]);
     });
     describe('when "crud" option is not enabled', () => {
@@ -649,6 +701,10 @@ export class UsersModule {}
           '/users/users.module.ts',
           '/users/users.service.spec.ts',
           '/users/users.service.ts',
+          '/users/args/user-page.args.ts',
+          '/users/output/create-user.output.ts',
+          '/users/output/remove-user.output.ts',
+          '/users/output/update-user.output.ts',
         ]);
       });
     });
@@ -668,6 +724,10 @@ export class UsersModule {}
           '/users/users.gateway.ts',
           '/users/users.module.ts',
           '/users/users.service.ts',
+          '/users/args/user-page.args.ts',
+          '/users/output/create-user.output.ts',
+          '/users/output/remove-user.output.ts',
+          '/users/output/update-user.output.ts',
         ]);
       });
     });
@@ -690,8 +750,8 @@ export class UsersModule {}
       expect(tree.readContent('/users/users.gateway.ts'))
         .toEqual(`import { WebSocketGateway, SubscribeMessage, MessageBody } from '@nestjs/websockets';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './input/create-user.dto';
+import { UpdateUserDto } from './input/update-user.dto';
 
 @WebSocketGateway()
 export class UsersGateway {
@@ -727,11 +787,11 @@ export class UsersGateway {
     it('should generate "UsersService" class', () => {
       expect(tree.readContent('/users/users.service.ts'))
         .toEqual(`import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from './input/create-user.dto';
+import { UpdateUserDto } from './input/update-user.dto';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';
   }
@@ -758,8 +818,9 @@ export class UsersService {
     it('should generate "UsersModule" class', () => {
       expect(tree.readContent('/users/users.module.ts'))
         .toEqual(`import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
+
 import { UsersGateway } from './users.gateway';
+import { UsersService } from './users.service';
 
 @Module({
   providers: [UsersGateway, UsersService],
@@ -769,20 +830,20 @@ export class UsersModule {}
     });
 
     it('should generate "User" class', () => {
-      expect(tree.readContent('/users/entities/user.entity.ts'))
-        .toEqual(`export class User {}
+      expect(tree.readContent('/users/type/user.type.ts'))
+        .toEqual(`export class UserType {}
 `);
     });
 
     it('should generate "CreateUserDto" class', () => {
-      expect(tree.readContent('/users/dto/create-user.dto.ts')).toEqual(
+      expect(tree.readContent('/users/input/create-user.dto.ts')).toEqual(
         `export class CreateUserDto {}
 `,
       );
     });
 
     it('should generate "UpdateUserDto" class', () => {
-      expect(tree.readContent('/users/dto/update-user.dto.ts'))
+      expect(tree.readContent('/users/input/update-user.dto.ts'))
         .toEqual(`import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
 
@@ -819,6 +880,7 @@ describe('UsersGateway', () => {
     it('should generate "UsersService" spec file', () => {
       expect(tree.readContent('/users/users.service.spec.ts'))
         .toEqual(`import { Test, TestingModule } from '@nestjs/testing';
+
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
@@ -829,7 +891,9 @@ describe('UsersService', () => {
       providers: [UsersService],
     }).compile();
 
-    service = module.get<UsersService>(UsersService);
+    service = module.get<UsersService>(
+      UsersService,
+    );
   });
 
   it('should be defined', () => {
@@ -870,15 +934,16 @@ export class UsersGateway {
         .toEqual(`import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class UsersService {}
+export class UserService {}
 `);
     });
 
     it('should generate "UsersModule" class', () => {
       expect(tree.readContent('/users/users.module.ts'))
         .toEqual(`import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
+
 import { UsersGateway } from './users.gateway';
+import { UsersService } from './users.service';
 
 @Module({
   providers: [UsersGateway, UsersService],
@@ -888,15 +953,15 @@ export class UsersModule {}
     });
 
     it('should not generate "User" class', () => {
-      expect(tree.readContent('/users/entities/user.entity.ts')).toEqual('');
+      expect(tree.readContent('/users/type/user.type.ts')).toEqual('');
     });
 
     it('should not generate "CreateUserDto" class', () => {
-      expect(tree.readContent('/users/dto/create-user.dto.ts')).toEqual('');
+      expect(tree.readContent('/users/input/create-user.dto.ts')).toEqual('');
     });
 
     it('should not generate "UpdateUserDto" class', () => {
-      expect(tree.readContent('/users/dto/update-user.dto.ts')).toEqual('');
+      expect(tree.readContent('/users/input/update-user.dto.ts')).toEqual('');
     });
   });
 
@@ -917,9 +982,17 @@ export class UsersModule {}
         '/users/users.resolver.ts',
         '/users/users.service.spec.ts',
         '/users/users.service.ts',
-        '/users/dto/create-user.input.ts',
-        '/users/dto/update-user.input.ts',
-        '/users/entities/user.entity.ts',
+        '/users/args/user-page.args.ts',
+        '/users/input/user-order.input.ts',
+        '/users/input/user-where.input.ts',
+        '/users/input/create-user.input.ts',
+        '/users/input/remove-user.input.ts',
+        '/users/input/update-user.input.ts',
+        '/users/output/create-user.output.ts',
+        '/users/output/remove-user.output.ts',
+        '/users/output/update-user.output.ts',
+        '/users/type/user.type.ts',
+        '/users/type/user-page.type.ts',
       ]);
     });
     describe('when "crud" option is not enabled', () => {
@@ -939,6 +1012,10 @@ export class UsersModule {}
           '/users/users.resolver.ts',
           '/users/users.service.spec.ts',
           '/users/users.service.ts',
+          '/users/args/user-page.args.ts',
+          '/users/output/create-user.output.ts',
+          '/users/output/remove-user.output.ts',
+          '/users/output/update-user.output.ts',
         ]);
       });
     });
@@ -958,6 +1035,10 @@ export class UsersModule {}
           '/users/users.module.ts',
           '/users/users.resolver.ts',
           '/users/users.service.ts',
+          '/users/args/user-page.args.ts',
+          '/users/output/create-user.output.ts',
+          '/users/output/remove-user.output.ts',
+          '/users/output/update-user.output.ts',
         ]);
       });
     });
@@ -977,69 +1058,210 @@ export class UsersModule {}
 
     it('should generate "UsersResolver" class', () => {
       expect(tree.readContent('/users/users.resolver.ts'))
-        .toEqual(`import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { UsersService } from './users.service';
-import { User } from './entities/user.entity';
-import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
+        .toEqual(`import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Maybe } from 'graphql/jsutils/Maybe';
 
-@Resolver(() => User)
-export class UsersResolver {
-  constructor(private readonly usersService: UsersService) {}
+import { User } from '../auth/user.decorator';
+import { UserType } from '../user/type/user.type';
+import { UserPageArgs } from './args/user-page.args';
+import { CreateUserInput } from './input/create-user.input';
+import { RemoveUserInput } from './input/remove-user.input';
+import { UpdateUserInput } from './input/update-user.input';
+import { UserService } from './users.service';
+import { CreateUserOutput } from './output/create-user.output';
+import { RemoveUserOutput } from './output/remove-user.output';
+import { UpdateUserOutput } from './output/update-user.output';
+import { UserPageType } from './type/user-page.type';
+import { UserType } from './type/user.type';
 
-  @Mutation(() => User)
-  createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
-    return this.usersService.create(createUserInput);
+@Resolver(() => UserType)
+export class UserResolver {
+  constructor(
+    private readonly userService: UserService,
+  ) {}
+
+  @Mutation(() => CreateUserOutput)
+  async createUser(
+    @Args('input') input: CreateUserInput,
+    @User() user: UserType,
+  ): Promise<CreateUserOutput> {
+    return this.userService.createOne(input, user);
   }
 
-  @Query(() => [User], { name: 'users' })
-  findAll() {
-    return this.usersService.findAll();
+  @Query(() => UserPageType)
+  async userPage(
+    @Args() args: UserPageArgs,
+  ): Promise<UserPageType> {
+    return this.userService.findByPageArgs(args);
   }
 
-  @Query(() => User, { name: 'user' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.usersService.findOne(id);
+  @Query(() => UserType)
+  async user(
+    @Args('id', { type: () => ID }) id: string,
+  ): Promise<Maybe<UserType>> {
+    return this.userService.findById(id);
   }
 
-  @Mutation(() => User)
-  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-    return this.usersService.update(updateUserInput.id, updateUserInput);
+  @Mutation(() => UpdateUserOutput)
+  async updateUser(
+    @Args('input') input: UpdateUserInput,
+    @User() user: UserType,
+  ): Promise<UpdateUserOutput> {
+    return this.userService.updateOne(input.id, input, user);
   }
 
-  @Mutation(() => User)
-  removeUser(@Args('id', { type: () => Int }) id: number) {
-    return this.usersService.remove(id);
+  @Mutation(() => RemoveUserOutput)
+  async removeUser(
+    @Args('input') input: RemoveUserInput,
+  ): Promise<RemoveUserOutput> {
+    return this.userService.removeOne(input.id);
   }
 }
 `);
     });
     it('should generate "UsersService" class', () => {
       expect(tree.readContent('/users/users.service.ts'))
-        .toEqual(`import { Injectable } from '@nestjs/common';
-import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
+        .toEqual(`import { User } from '@app/db/entity/user.entity';
+import { GraphqlTypeService } from '@app/graphql-type';
+import { DaoIdNotFoundError } from '@app/graphql-type/error/dao-id-not-found.error';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
+
+import { ServiceMetadata } from '../common/service-metadata.interface';
+import { UserType } from '../user/type/user.type';
+import { UserPageArgs } from './args/user-page.args';
+import { CreateUserInput } from './input/create-user.input';
+import { UpdateUserInput } from './input/update-user.input';
+import { CreateUserOutput } from './output/create-user.output';
+import { RemoveUserOutput } from './output/remove-user.output';
+import { UpdateUserOutput } from './output/update-user.output';
+import { UserPageType } from './type/user-page.type';
 
 @Injectable()
-export class UsersService {
-  create(createUserInput: CreateUserInput) {
-    return 'This action adds a new user';
+export class UserService {
+  constructor(
+    private readonly manager: EntityManager,
+    private readonly graphqlTypeService: GraphqlTypeService,
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
+  ) {}
+
+  async createOne(
+    input: CreateUserInput,
+    user: UserType,
+    metadata?: Pick<ServiceMetadata, 'manager'>,
+  ): Promise<CreateUserOutput> {
+    const create = async (manager: EntityManager) => {
+      const userRepo = manager.getRepository(User);
+
+      const user = userRepo.create({
+        ...input,
+        createdBy: user.id,
+        updatedBy: user.id,
+      });
+
+      await userRepo.save(
+        user,
+      );
+
+      return { user };
+    };
+
+    if (metadata?.manager) {
+      return create(metadata.manager);
+    }
+
+    return this.manager.transaction('READ COMMITTED', create);
   }
 
-  findAll() {
-    return \`This action returns all users\`;
+  async findByPageArgs(
+    args: UserPageArgs,
+    metadata?: Pick<ServiceMetadata, 'manager'>,
+  ): Promise<UserPageType> {
+    const userRepo = metadata?.manager
+      ? metadata.manager.getRepository(User)
+      : this.userRepo;
+
+    const { take, skip, order, where } = args;
+
+    return this.graphqlTypeService.daoNodePage(
+      userRepo,
+      { take, skip, order },
+      where,
+    );
   }
 
-  findOne(id: number) {
-    return \`This action returns a #\${id} user\`;
+  async findById(
+    id: string,
+    metadata?: Pick<ServiceMetadata, 'manager'>,
+  ): Promise<User | null> {
+    if (metadata?.manager) {
+      const userRepo = metadata.manager.getRepository(User);
+      return userRepo.findOneBy({ id });
+    }
+
+    return this.userRepo.findOneBy({ id });
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return \`This action updates a #\${id} user\`;
+  async updateOne(
+    id: string,
+    input: UpdateUserInput,
+    user: UserType,
+    metadata?: Pick<ServiceMetadata, 'manager'>,
+  ): Promise<UpdateUserOutput> {
+    const update = async (manager: EntityManager) => {
+      const userRepo = manager.getRepository(User);
+
+      const user = await userRepo.preload({
+        ...input,
+        updatedBy: user.id,
+        id,
+      });
+      if (!user) {
+        throw new DaoIdNotFoundError(User, id);
+      }
+
+      await userRepo.save(
+        user,
+      );
+
+      return {
+        user,
+      };
+    };
+
+    if (metadata?.manager) {
+      return update(metadata.manager);
+    }
+
+    return this.manager.transaction('READ COMMITTED', update);
   }
 
-  remove(id: number) {
-    return \`This action removes a #\${id} user\`;
+  async removeOne(
+    id: string,
+    metadata?: Pick<ServiceMetadata, 'manager'>,
+  ): Promise<RemoveUserOutput> {
+    const remove = async (manager: EntityManager) => {
+      const userRepo = manager.getRepository(User);
+
+      const user = await userRepo.findOneBy({ id });
+      if (!user) {
+        throw new DaoIdNotFoundError(User, id);
+      }
+
+      const result = await userRepo.softRemove(user);
+
+      return {
+        user: result,
+      };
+    };
+
+    if (metadata?.manager) {
+      return remove(metadata.manager);
+    }
+
+    return this.manager.transaction('READ COMMITTED', remove);
   }
 }
 `);
@@ -1047,51 +1269,132 @@ export class UsersService {
 
     it('should generate "UsersModule" class', () => {
       expect(tree.readContent('/users/users.module.ts'))
-        .toEqual(`import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
+        .toEqual(`import { Users } from '@app/db/entity/users.entity';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { UsersResolver } from './users.resolver';
+import { UsersService } from './users.service';
 
 @Module({
+  imports: [TypeOrmModule.forFeature([Users])],
   providers: [UsersResolver, UsersService],
 })
 export class UsersModule {}
 `);
     });
 
-    it('should generate "User" class', () => {
-      expect(tree.readContent('/users/entities/user.entity.ts'))
-        .toEqual(`import { ObjectType, Field, Int } from '@nestjs/graphql';
+    it('should generate "UserType" class', () => {
+      expect(tree.readContent('/users/type/user.type.ts'))
+        .toEqual(`import { DaoNode } from '@app/graphql-type/type/dao-node.type';
+import { GraphNode } from '@app/graphql-type/type/graph-node.type';
+import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
-export class User {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+@ObjectType('User', {
+  implements: [GraphNode, DaoNode],
+})
+export class UserType extends DaoNode {
+  @Field(() => String, { nullable: true })
+  exampleField?: string;
+}
+`);
+    });
+
+    it('should generate "UserPageType" class', () => {
+      expect(tree.readContent('/users/type/user-page.type.ts'))
+        .toEqual(`import { DaoNodePage } from '@app/graphql-type/type/dao-node-page.type';
+import { Field, ObjectType } from '@nestjs/graphql';
+
+import { UserType } from './user.type';
+
+@ObjectType('UserPage', {
+  implements: [DaoNodePage],
+})
+export class UserPageType implements DaoNodePage<UserType> {
+  @Field(() => [UserType], { description: 'Nodes in this page' })
+  nodes!: UserType[];
+}
+`);
+    });
+
+    it('should generate "UserPageArgs" class', () => {
+      expect(tree.readContent('/users/args/user-page.args.ts'))
+        .toEqual(`import { DaoNodePageArgs } from '@app/graphql-type/args/dao-node-page.args';
+import { ArgsType, Field } from '@nestjs/graphql';
+
+import { UserOrderInput } from '../input/user-order.input';
+import { UserWhereInput } from '../input/user-where.input';
+
+@ArgsType()
+export class UserPageArgs extends DaoNodePageArgs {
+  @Field(() => UserOrderInput, {
+    description: '排序欄位與方式',
+    defaultValue: new UserOrderInput(),
+  })
+  order: UserOrderInput = new UserOrderInput();
+
+  @Field(() => UserWhereInput, {
+    description: '查詢條件',
+    defaultValue: new UserWhereInput(),
+  })
+  where: UserWhereInput = new UserWhereInput();
+}
+`);
+    });
+
+    it('should generate "UserOrderInput" class', () => {
+      expect(tree.readContent('/users/input/user-order.input.ts'))
+        .toEqual(`import {
+  DaoNodeOrderInput,
+  DaoNodeOrderValue,
+} from '@app/graphql-type/input/dao-node-order.input';
+import { Field, InputType } from '@nestjs/graphql';
+import { Maybe } from 'graphql/jsutils/Maybe';
+
+@InputType()
+export class UserOrderInput extends DaoNodeOrderInput {
+  @Field(() => DaoNodeOrderValue, { nullable: true })
+  exampleField?: Maybe<DaoNodeOrderValue>;
+}
+`);
+    });
+
+    it('should generate "UserWhereInput" class', () => {
+      expect(tree.readContent('/users/input/user-where.input.ts'))
+        .toEqual(`import { Field, ID, InputType } from '@nestjs/graphql';
+
+@InputType()
+export class UserWhereInput {
+  @Field(() => ID, { description: 'Example field' })
+  id!: string;
 }
 `);
     });
 
     it('should generate "CreateUserInput" class', () => {
-      expect(tree.readContent('/users/dto/create-user.input.ts')).toEqual(
-        `import { InputType, Int, Field } from '@nestjs/graphql';
+      expect(tree.readContent('/users/input/create-user.input.ts'))
+        .toEqual(`import { Field, ID, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateUserInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+  @Field(() => ID, { description: 'Example field' })
+  id!: string;
 }
-`,
-      );
+`);
     });
 
     it('should generate "UpdateUserInput" class', () => {
-      expect(tree.readContent('/users/dto/update-user.input.ts'))
-        .toEqual(`import { CreateUserInput } from './create-user.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+      expect(tree.readContent('/users/input/update-user.input.ts'))
+        .toEqual(`import { Field, ID, InputType, PartialType } from '@nestjs/graphql';
+
+import { CreateUserInput } from './create-user.input';
 
 @InputType()
-export class UpdateUserInput extends PartialType(CreateUserInput) {
-  @Field(() => Int)
-  id: number;
+export class UpdateUserInput extends PartialType(
+  CreateUserInput,
+) {
+  @Field(() => ID)
+  id!: string;
 }
 `);
     });
@@ -1099,6 +1402,7 @@ export class UpdateUserInput extends PartialType(CreateUserInput) {
     it('should generate "UsersResolver" spec file', () => {
       expect(tree.readContent('/users/users.resolver.spec.ts'))
         .toEqual(`import { Test, TestingModule } from '@nestjs/testing';
+
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
 
@@ -1110,7 +1414,9 @@ describe('UsersResolver', () => {
       providers: [UsersResolver, UsersService],
     }).compile();
 
-    resolver = module.get<UsersResolver>(UsersResolver);
+    resolver = module.get<UsersResolver>(
+      UsersResolver,
+    );
   });
 
   it('should be defined', () => {
@@ -1123,6 +1429,7 @@ describe('UsersResolver', () => {
     it('should generate "UsersService" spec file', () => {
       expect(tree.readContent('/users/users.service.spec.ts'))
         .toEqual(`import { Test, TestingModule } from '@nestjs/testing';
+
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
@@ -1133,7 +1440,9 @@ describe('UsersService', () => {
       providers: [UsersService],
     }).compile();
 
-    service = module.get<UsersService>(UsersService);
+    service = module.get<UsersService>(
+      UsersService,
+    );
   });
 
   it('should be defined', () => {
@@ -1161,9 +1470,17 @@ describe('UsersService', () => {
         '/users/users.resolver.ts',
         '/users/users.service.spec.ts',
         '/users/users.service.ts',
-        '/users/dto/create-user.input.ts',
-        '/users/dto/update-user.input.ts',
-        '/users/entities/user.entity.ts',
+        '/users/args/user-page.args.ts',
+        '/users/input/user-order.input.ts',
+        '/users/input/user-where.input.ts',
+        '/users/input/create-user.input.ts',
+        '/users/input/remove-user.input.ts',
+        '/users/input/update-user.input.ts',
+        '/users/output/create-user.output.ts',
+        '/users/output/remove-user.output.ts',
+        '/users/output/update-user.output.ts',
+        '/users/type/user.type.ts',
+        '/users/type/user-page.type.ts',
       ]);
     });
     describe('when "crud" option is not enabled', () => {
@@ -1183,6 +1500,10 @@ describe('UsersService', () => {
           '/users/users.resolver.ts',
           '/users/users.service.spec.ts',
           '/users/users.service.ts',
+          '/users/args/user-page.args.ts',
+          '/users/output/create-user.output.ts',
+          '/users/output/remove-user.output.ts',
+          '/users/output/update-user.output.ts',
         ]);
       });
     });
@@ -1202,6 +1523,10 @@ describe('UsersService', () => {
           '/users/users.module.ts',
           '/users/users.resolver.ts',
           '/users/users.service.ts',
+          '/users/args/user-page.args.ts',
+          '/users/output/create-user.output.ts',
+          '/users/output/remove-user.output.ts',
+          '/users/output/update-user.output.ts',
         ]);
       });
     });
@@ -1221,13 +1546,16 @@ describe('UsersService', () => {
     it('should generate "UsersResolver" class', () => {
       expect(tree.readContent('/users/users.resolver.ts'))
         .toEqual(`import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
-import { UsersService } from './users.service';
-import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
+
+import { CreateUserInput } from './input/create-user.input';
+import { UpdateUserInput } from './input/update-user.input';
+import { UserService } from './users.service';
 
 @Resolver('User')
-export class UsersResolver {
-  constructor(private readonly usersService: UsersService) {}
+export class UserResolver {
+  constructor(
+    private readonly userService: UserService,
+  ) {}
 
   @Mutation('createUser')
   create(@Args('createUserInput') createUserInput: CreateUserInput) {
@@ -1258,30 +1586,147 @@ export class UsersResolver {
     });
     it('should generate "UsersService" class', () => {
       expect(tree.readContent('/users/users.service.ts'))
-        .toEqual(`import { Injectable } from '@nestjs/common';
-import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
+        .toEqual(`import { User } from '@app/db/entity/user.entity';
+import { GraphqlTypeService } from '@app/graphql-type';
+import { DaoIdNotFoundError } from '@app/graphql-type/error/dao-id-not-found.error';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
+
+import { ServiceMetadata } from '../common/service-metadata.interface';
+import { UserType } from '../user/type/user.type';
+import { UserPageArgs } from './args/user-page.args';
+import { CreateUserInput } from './input/create-user.input';
+import { UpdateUserInput } from './input/update-user.input';
+import { CreateUserOutput } from './output/create-user.output';
+import { RemoveUserOutput } from './output/remove-user.output';
+import { UpdateUserOutput } from './output/update-user.output';
+import { UserPageType } from './type/user-page.type';
 
 @Injectable()
-export class UsersService {
-  create(createUserInput: CreateUserInput) {
-    return 'This action adds a new user';
+export class UserService {
+  constructor(
+    private readonly manager: EntityManager,
+    private readonly graphqlTypeService: GraphqlTypeService,
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
+  ) {}
+
+  async createOne(
+    input: CreateUserInput,
+    user: UserType,
+    metadata?: Pick<ServiceMetadata, 'manager'>,
+  ): Promise<CreateUserOutput> {
+    const create = async (manager: EntityManager) => {
+      const userRepo = manager.getRepository(User);
+
+      const user = userRepo.create({
+        ...input,
+        createdBy: user.id,
+        updatedBy: user.id,
+      });
+
+      await userRepo.save(
+        user,
+      );
+
+      return { user };
+    };
+
+    if (metadata?.manager) {
+      return create(metadata.manager);
+    }
+
+    return this.manager.transaction('READ COMMITTED', create);
   }
 
-  findAll() {
-    return \`This action returns all users\`;
+  async findByPageArgs(
+    args: UserPageArgs,
+    metadata?: Pick<ServiceMetadata, 'manager'>,
+  ): Promise<UserPageType> {
+    const userRepo = metadata?.manager
+      ? metadata.manager.getRepository(User)
+      : this.userRepo;
+
+    const { take, skip, order, where } = args;
+
+    return this.graphqlTypeService.daoNodePage(
+      userRepo,
+      { take, skip, order },
+      where,
+    );
   }
 
-  findOne(id: number) {
-    return \`This action returns a #\${id} user\`;
+  async findById(
+    id: string,
+    metadata?: Pick<ServiceMetadata, 'manager'>,
+  ): Promise<User | null> {
+    if (metadata?.manager) {
+      const userRepo = metadata.manager.getRepository(User);
+      return userRepo.findOneBy({ id });
+    }
+
+    return this.userRepo.findOneBy({ id });
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return \`This action updates a #\${id} user\`;
+  async updateOne(
+    id: string,
+    input: UpdateUserInput,
+    user: UserType,
+    metadata?: Pick<ServiceMetadata, 'manager'>,
+  ): Promise<UpdateUserOutput> {
+    const update = async (manager: EntityManager) => {
+      const userRepo = manager.getRepository(User);
+
+      const user = await userRepo.preload({
+        ...input,
+        updatedBy: user.id,
+        id,
+      });
+      if (!user) {
+        throw new DaoIdNotFoundError(User, id);
+      }
+
+      await userRepo.save(
+        user,
+      );
+
+      return {
+        user,
+      };
+    };
+
+    if (metadata?.manager) {
+      return update(metadata.manager);
+    }
+
+    return this.manager.transaction('READ COMMITTED', update);
   }
 
-  remove(id: number) {
-    return \`This action removes a #\${id} user\`;
+  async removeOne(
+    id: string,
+    metadata?: Pick<ServiceMetadata, 'manager'>,
+  ): Promise<RemoveUserOutput> {
+    const remove = async (manager: EntityManager) => {
+      const userRepo = manager.getRepository(User);
+
+      const user = await userRepo.findOneBy({ id });
+      if (!user) {
+        throw new DaoIdNotFoundError(User, id);
+      }
+
+      const result = await userRepo.softRemove(user);
+
+      return {
+        user: result,
+      };
+    };
+
+    if (metadata?.manager) {
+      return remove(metadata.manager);
+    }
+
+    return this.manager.transaction('READ COMMITTED', remove);
   }
 }
 `);
@@ -1289,11 +1734,15 @@ export class UsersService {
 
     it('should generate "UsersModule" class', () => {
       expect(tree.readContent('/users/users.module.ts'))
-        .toEqual(`import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
+        .toEqual(`import { Users } from '@app/db/entity/users.entity';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { UsersResolver } from './users.resolver';
+import { UsersService } from './users.service';
 
 @Module({
+  imports: [TypeOrmModule.forFeature([Users])],
   providers: [UsersResolver, UsersService],
 })
 export class UsersModule {}
@@ -1301,20 +1750,20 @@ export class UsersModule {}
     });
 
     it('should generate "User" class', () => {
-      expect(tree.readContent('/users/entities/user.entity.ts'))
-        .toEqual(`export class User {}
+      expect(tree.readContent('/users/type/user.type.ts'))
+        .toEqual(`export class UserType {}
 `);
     });
 
     it('should generate "CreateUserInput" class', () => {
-      expect(tree.readContent('/users/dto/create-user.input.ts')).toEqual(
+      expect(tree.readContent('/users/input/create-user.input.ts')).toEqual(
         `export class CreateUserInput {}
 `,
       );
     });
 
     it('should generate "UpdateUserInput" class', () => {
-      expect(tree.readContent('/users/dto/update-user.input.ts'))
+      expect(tree.readContent('/users/input/update-user.input.ts'))
         .toEqual(`import { CreateUserInput } from './create-user.input';
 import { PartialType } from '@nestjs/mapped-types';
 
@@ -1327,6 +1776,7 @@ export class UpdateUserInput extends PartialType(CreateUserInput) {
     it('should generate "UsersResolver" spec file', () => {
       expect(tree.readContent('/users/users.resolver.spec.ts'))
         .toEqual(`import { Test, TestingModule } from '@nestjs/testing';
+
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
 
@@ -1338,7 +1788,9 @@ describe('UsersResolver', () => {
       providers: [UsersResolver, UsersService],
     }).compile();
 
-    resolver = module.get<UsersResolver>(UsersResolver);
+    resolver = module.get<UsersResolver>(
+      UsersResolver,
+    );
   });
 
   it('should be defined', () => {
@@ -1351,6 +1803,7 @@ describe('UsersResolver', () => {
     it('should generate "UsersService" spec file', () => {
       expect(tree.readContent('/users/users.service.spec.ts'))
         .toEqual(`import { Test, TestingModule } from '@nestjs/testing';
+
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
@@ -1361,7 +1814,9 @@ describe('UsersService', () => {
       providers: [UsersService],
     }).compile();
 
-    service = module.get<UsersService>(UsersService);
+    service = module.get<UsersService>(
+      UsersService,
+    );
   });
 
   it('should be defined', () => {
@@ -1402,6 +1857,7 @@ type Mutation {
   it('should create spec files', async () => {
     const options: ResourceOptions = {
       name: 'foo',
+      type: 'rest',
       spec: true,
       flat: true,
     };
@@ -1420,6 +1876,7 @@ type Mutation {
   it('should create spec files with custom file suffix', async () => {
     const options: ResourceOptions = {
       name: 'foo',
+      type: 'rest',
       spec: true,
       specFileSuffix: 'test',
       flat: true,

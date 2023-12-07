@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { <%= classify(name) %>Resolver } from './<%= name %>.resolver';
 import { <%= classify(name) %>Service } from './<%= name %>.service';
 
@@ -10,7 +11,9 @@ describe('<%= classify(name) %>Resolver', () => {
       providers: [<%= classify(name) %>Resolver, <%= classify(name) %>Service],
     }).compile();
 
-    resolver = module.get<<%= classify(name) %>Resolver>(<%= classify(name) %>Resolver);
+    resolver = module.get<<%= classify(name) %>Resolver>(
+      <%= classify(name) %>Resolver,
+    );
   });
 
   it('should be defined', () => {
