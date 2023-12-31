@@ -1,54 +1,34 @@
-<% if (crud && type !== 'graphql-code-first' && type !== 'graphql-schema-first') { %>import { Injectable } from '@nestjs/common';
-import { Create<%= singular(classify(name)) %>Dto } from './input/create-<%= singular(name) %>.dto';
-import { Update<%= singular(classify(name)) %>Dto } from './input/update-<%= singular(name) %>.dto';<% } else if (crud) { %>import { <%= singular(classify(name)) %> } from '@app/db/entity/<%= singular(name) %>.entity';
-import { GraphqlTypeService } from '@app/graphql-type';
+import { <%= singular(classify(name)) %> } from '@app/db/entity/<%= singular(name) %>.entity';
 import { DaoIdNotFoundError } from '@app/graphql-type/error/dao-id-not-found.error';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { BaseService, Nullable } from 'apps/main/src/common/base.service';
+import { Maybe } from 'graphql/jsutils/Maybe';
+import { EntityManager, FindOptionsWhere, Repository } from 'typeorm';
 
 import { ServiceMetadata } from '../common/service-metadata.interface';
-import { UserType } from '../user/type/user.type';
 import { <%= singular(classify(name)) %>PageArgs } from './args/<%= singular(name) %>-page.args';
 import { Create<%= singular(classify(name)) %>Input } from './input/create-<%= singular(name) %>.input';
 import { Update<%= singular(classify(name)) %>Input } from './input/update-<%= singular(name) %>.input';
+import { <%= singular(classify(name)) %>WhereInput } from './input/<%= singular(lowercased(name)) %>-where.input';
 import { Create<%= singular(classify(name)) %>Output } from './output/create-<%= singular(name) %>.output';
 import { Remove<%= singular(classify(name)) %>Output } from './output/remove-<%= singular(name) %>.output';
 import { Update<%= singular(classify(name)) %>Output } from './output/update-<%= singular(name) %>.output';
-import { <%= singular(classify(name)) %>PageType } from './type/<%= singular(name) %>-page.type';<% } else { %>import { Injectable } from '@nestjs/common';<% } %>
+import { <%= singular(classify(name)) %>PageType } from './type/<%= singular(name) %>-page.type';
 
 @Injectable()
-export class <%= singular(classify(name)) %>Service {<% if (crud && type !== 'graphql-code-first' && type !== 'graphql-schema-first') { %>
-  create(<% if (type !== 'graphql-code-first' && type !== 'graphql-schema-first') { %>create<%= singular(classify(name)) %>Dto: Create<%= singular(classify(name)) %>Dto<% } else { %>create<%= singular(classify(name)) %>Input: Create<%= singular(classify(name)) %>Input<% } %>) {
-    return 'This action adds a new <%= lowercased(singular(classify(name))) %>';
-  }
-
-  findAll() {
-    return `This action returns all <%= lowercased(classify(name)) %>`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} <%= lowercased(singular(classify(name))) %>`;
-  }
-
-  update(id: number, <% if (type !== 'graphql-code-first' && type !== 'graphql-schema-first') { %>update<%= singular(classify(name)) %>Dto: Update<%= singular(classify(name)) %>Dto<% } else { %>update<%= singular(classify(name)) %>Input: Update<%= singular(classify(name)) %>Input<% } %>) {
-    return `This action updates a #${id} <%= lowercased(singular(classify(name))) %>`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} <%= lowercased(singular(classify(name))) %>`;
-  }
-<% } %><% else if (crud) { %>
+export class <%= singular(classify(name)) %>Service extends BaseService<<%= singular(classify(name)) %>> {
   constructor(
     private readonly manager: EntityManager,
-    private readonly graphqlTypeService: GraphqlTypeService,
     @InjectRepository(<%= singular(classify(name)) %>)
     private readonly <%= singular(lowercased(name)) %>Repo: Repository<<%= singular(classify(name)) %>>,
-  ) {}
+  ) {
+    super(<%= singular(lowercased(name)) %>Repo);
+  }
 
   async createOne(
     input: Create<%= singular(classify(name)) %>Input,
-    user: UserType,
+    user: User,
     metadata?: Pick<ServiceMetadata, 'manager'>,
   ): Promise<Create<%= singular(classify(name)) %>Output> {
     const create = async (manager: EntityManager) => {
@@ -78,16 +58,9 @@ export class <%= singular(classify(name)) %>Service {<% if (crud && type !== 'gr
     args: <%= singular(classify(name)) %>PageArgs,
     metadata?: Pick<ServiceMetadata, 'manager'>,
   ): Promise<<%= singular(classify(name)) %>PageType> {
-    const <%= singular(lowercased(name)) %>Repo = metadata?.manager
-      ? metadata.manager.getRepository(<%= singular(classify(name)) %>)
-      : this.<%= singular(lowercased(name)) %>Repo;
-
-    const { take, skip, order, where } = args;
-
-    return this.graphqlTypeService.daoNodePage(
-      <%= singular(lowercased(name)) %>Repo,
-      { take, skip, order },
-      where,
+    return this.findNodePage(
+      { ...args, where: args.where.toFindOptionsWhere() },
+      metadata,
     );
   }
 
@@ -106,7 +79,7 @@ export class <%= singular(classify(name)) %>Service {<% if (crud && type !== 'gr
   async updateOne(
     id: string,
     input: Update<%= singular(classify(name)) %>Input,
-    user: UserType,
+    user: User,
     metadata?: Pick<ServiceMetadata, 'manager'>,
   ): Promise<Update<%= singular(classify(name)) %>Output> {
     const update = async (manager: EntityManager) => {
@@ -149,10 +122,10 @@ export class <%= singular(classify(name)) %>Service {<% if (crud && type !== 'gr
         throw new DaoIdNotFoundError(<%= singular(classify(name)) %>, id);
       }
 
-      const result = await <%= singular(lowercased(name)) %>Repo.softRemove(<%= singular(lowercased(name)) %>);
+      await <%= singular(lowercased(name)) %>Repo.softRemove(<%= singular(lowercased(name)) %>);
 
       return {
-        <%= singular(lowercased(name)) %>: result,
+        <%= singular(lowercased(name)) %>,
       };
     };
 
@@ -162,4 +135,4 @@ export class <%= singular(classify(name)) %>Service {<% if (crud && type !== 'gr
 
     return this.manager.transaction('READ COMMITTED', remove);
   }
-<% } %>}
+}

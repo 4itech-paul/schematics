@@ -162,34 +162,36 @@ export class UserResolver {
     it('should generate "UsersService" class', () => {
       expect(tree.readContent('/users/users.service.ts'))
         .toEqual(`import { User } from '@app/db/entity/user.entity';
-import { GraphqlTypeService } from '@app/graphql-type';
 import { DaoIdNotFoundError } from '@app/graphql-type/error/dao-id-not-found.error';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { BaseService, Nullable } from 'apps/main/src/common/base.service';
+import { Maybe } from 'graphql/jsutils/Maybe';
+import { EntityManager, FindOptionsWhere, Repository } from 'typeorm';
 
 import { ServiceMetadata } from '../common/service-metadata.interface';
-import { UserType } from '../user/type/user.type';
 import { UserPageArgs } from './args/user-page.args';
 import { CreateUserInput } from './input/create-user.input';
 import { UpdateUserInput } from './input/update-user.input';
+import { UserWhereInput } from './input/user-where.input';
 import { CreateUserOutput } from './output/create-user.output';
 import { RemoveUserOutput } from './output/remove-user.output';
 import { UpdateUserOutput } from './output/update-user.output';
 import { UserPageType } from './type/user-page.type';
 
 @Injectable()
-export class UserService {
+export class UserService extends BaseService<User> {
   constructor(
     private readonly manager: EntityManager,
-    private readonly graphqlTypeService: GraphqlTypeService,
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
-  ) {}
+  ) {
+    super(userRepo);
+  }
 
   async createOne(
     input: CreateUserInput,
-    user: UserType,
+    user: User,
     metadata?: Pick<ServiceMetadata, 'manager'>,
   ): Promise<CreateUserOutput> {
     const create = async (manager: EntityManager) => {
@@ -219,16 +221,9 @@ export class UserService {
     args: UserPageArgs,
     metadata?: Pick<ServiceMetadata, 'manager'>,
   ): Promise<UserPageType> {
-    const userRepo = metadata?.manager
-      ? metadata.manager.getRepository(User)
-      : this.userRepo;
-
-    const { take, skip, order, where } = args;
-
-    return this.graphqlTypeService.daoNodePage(
-      userRepo,
-      { take, skip, order },
-      where,
+    return this.findNodePage(
+      { ...args, where: args.where.toFindOptionsWhere() },
+      metadata,
     );
   }
 
@@ -247,7 +242,7 @@ export class UserService {
   async updateOne(
     id: string,
     input: UpdateUserInput,
-    user: UserType,
+    user: User,
     metadata?: Pick<ServiceMetadata, 'manager'>,
   ): Promise<UpdateUserOutput> {
     const update = async (manager: EntityManager) => {
@@ -290,10 +285,10 @@ export class UserService {
         throw new DaoIdNotFoundError(User, id);
       }
 
-      const result = await userRepo.softRemove(user);
+      await userRepo.softRemove(user);
 
       return {
-        user: result,
+        user,
       };
     };
 
