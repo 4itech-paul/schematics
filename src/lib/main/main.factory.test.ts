@@ -366,18 +366,24 @@ export class UserPageType implements MainDaoNodePage<User> {
       expect(tree.readContent('/users/args/user-page.args.ts'))
         .toEqual(`import { DaoNodePageArgs } from '@app/graphql-type/args/dao-node-page.args';
 import { ArgsType, Field } from '@nestjs/graphql';
+import { Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
 
 import { UserOrderInput } from '../input/user-order.input';
 import { UserWhereInput } from '../input/user-where.input';
 
 @ArgsType()
 export class UserPageArgs extends DaoNodePageArgs {
+  @ValidateNested()
+  @Type(() => UserOrderInput)
   @Field(() => UserOrderInput, {
     description: '排序欄位與方式',
     defaultValue: new UserOrderInput(),
   })
   order: UserOrderInput = new UserOrderInput();
 
+  @ValidateNested()
+  @Type(() => UserWhereInput)
   @Field(() => UserWhereInput, {
     description: '查詢條件',
     defaultValue: new UserWhereInput(),
