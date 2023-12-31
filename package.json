@@ -4,7 +4,7 @@
   "description": "Nest - modern, fast, powerful node.js web framework (@schematics)",
   "main": "dist/index.js",
   "files": [
-    "dist/**/*"
+    "dist"
   ],
   "publishConfig": {
     "access": "public"
