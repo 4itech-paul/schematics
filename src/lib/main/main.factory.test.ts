@@ -304,18 +304,18 @@ export class UserService extends BaseService<User> {
 
     it('should generate "UsersModule" class', () => {
       expect(tree.readContent('/users/users.module.ts'))
-        .toEqual(`import { Users } from '@app/db/entity/users.entity';
-import { Module } from '@nestjs/common';
+        .toEqual(`import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { UsersResolver } from './users.resolver';
-import { UsersService } from './users.service';
+import { User } from './user.entity';
+import { UserResolver } from './user.resolver';
+import { UserService } from './user.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Users])],
-  providers: [UsersResolver, UsersService],
+  imports: [TypeOrmModule.forFeature([User])],
+  providers: [UserResolver, UserService],
 })
-export class UsersModule {}
+export class UserModule {}
 `);
     });
 
