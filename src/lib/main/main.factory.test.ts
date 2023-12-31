@@ -21,6 +21,7 @@ describe('main Factory', () => {
       const tree = await runner.runSchematic('main', options);
       const files = tree.files;
       expect(files).toEqual([
+        '/users/user.entity.ts',
         '/users/users.module.ts',
         '/users/users.resolver.spec.ts',
         '/users/users.resolver.ts',
@@ -35,7 +36,6 @@ describe('main Factory', () => {
         '/users/output/create-user.output.ts',
         '/users/output/remove-user.output.ts',
         '/users/output/update-user.output.ts',
-        '/users/type/user.type.ts',
         '/users/type/user-page.type.ts',
       ]);
     });
@@ -49,6 +49,7 @@ describe('main Factory', () => {
         const tree = await runner.runSchematic('main', options);
         const files = tree.files;
         expect(files).toEqual([
+          '/users/user.entity.ts',
           '/users/users.module.ts',
           '/users/users.resolver.spec.ts',
           '/users/users.resolver.ts',
@@ -72,6 +73,7 @@ describe('main Factory', () => {
         const tree = await runner.runSchematic('main', options);
         const files = tree.files;
         expect(files).toEqual([
+          '/users/user.entity.ts',
           '/users/users.module.ts',
           '/users/users.resolver.ts',
           '/users/users.service.ts',
@@ -319,18 +321,26 @@ export class UserModule {}
 `);
     });
 
-    it('should generate "UserType" class', () => {
-      expect(tree.readContent('/users/type/user.type.ts'))
-        .toEqual(`import { DaoNode } from '@app/graphql-type/type/dao-node.type';
-import { GraphNode } from '@app/graphql-type/type/graph-node.type';
+    it('should generate "User" class', () => {
+      expect(tree.readContent('/users/user.entity.ts'))
+        .toEqual(`import { CustomBaseEntity } from '@app/db/entity/custom-base.entity';
+import { VarcharLength } from '@app/enum/varchar-length.enum';
 import { Field, ObjectType } from '@nestjs/graphql';
+import { MainDaoNode } from 'apps/main/src/common/main-dao-node.type';
+import { Maybe } from 'graphql/jsutils/Maybe';
+import { Column, Entity } from 'typeorm';
 
-@ObjectType('User', {
-  implements: [GraphNode, DaoNode],
-})
-export class UserType extends DaoNode {
-  @Field(() => String, { nullable: true })
-  exampleField?: string;
+@ObjectType({ implements: [MainDaoNode] })
+@Entity()
+export class User extends CustomBaseEntity {
+  @Field(() => String, { description: '#', nullable: true })
+  @Column({
+    type: 'varchar',
+    length: VarcharLength.Short,
+    comment: '#',
+    nullable: true,
+  })
+  exampleField?: Maybe<string>;
 }
 `);
     });
