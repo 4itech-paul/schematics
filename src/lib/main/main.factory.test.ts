@@ -412,12 +412,19 @@ export class UserOrderInput extends DaoNodeOrderInput {
 
     it('should generate "UserWhereInput" class', () => {
       expect(tree.readContent('/users/input/user-where.input.ts'))
-        .toEqual(`import { Field, ID, InputType } from '@nestjs/graphql';
+        .toEqual(`import { PartialAndOmitType } from '@app/graphql-type/partial-and-omit-type';
+import { InputType } from '@nestjs/graphql';
+import { Nullable } from 'apps/main/src/common/base.service';
+import { FindOptionsWhere } from 'typeorm';
+
+import { User } from '../user.entity';
 
 @InputType()
-export class UserWhereInput {
-  @Field(() => ID, { description: 'Example field' })
-  id!: string;
+export class UserWhereInput extends PartialAndOmitType(User, []) {
+  toFindOptionsWhere(): Nullable<FindOptionsWhere<User>> | undefined {
+    const { ...where } = this;
+    return { ...where };
+  }
 }
 `);
     });
