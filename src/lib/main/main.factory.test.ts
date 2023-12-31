@@ -98,23 +98,23 @@ describe('main Factory', () => {
 
     it('should generate "UsersResolver" class', () => {
       expect(tree.readContent('/users/users.resolver.ts'))
-        .toEqual(`import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+        .toEqual(`import { User } from '@app/db/entity/user.entity';
+import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
-import { User } from '../auth/user.decorator';
-import { UserType } from '../user/type/user.type';
+import { UserDecorator } from '../auth/user.decorator';
 import { UserPageArgs } from './args/user-page.args';
 import { CreateUserInput } from './input/create-user.input';
 import { RemoveUserInput } from './input/remove-user.input';
 import { UpdateUserInput } from './input/update-user.input';
-import { UserService } from './users.service';
 import { CreateUserOutput } from './output/create-user.output';
 import { RemoveUserOutput } from './output/remove-user.output';
 import { UpdateUserOutput } from './output/update-user.output';
 import { UserPageType } from './type/user-page.type';
-import { UserType } from './type/user.type';
+import { User } from './user.entity';
+import { UserService } from './user.service';
 
-@Resolver(() => UserType)
+@Resolver(() => User)
 export class UserResolver {
   constructor(
     private readonly userService: UserService,
@@ -123,7 +123,7 @@ export class UserResolver {
   @Mutation(() => CreateUserOutput)
   async createUser(
     @Args('input') input: CreateUserInput,
-    @User() user: UserType,
+    @UserDecorator() user: User,
   ): Promise<CreateUserOutput> {
     return this.userService.createOne(input, user);
   }
@@ -135,17 +135,17 @@ export class UserResolver {
     return this.userService.findByPageArgs(args);
   }
 
-  @Query(() => UserType)
+  @Query(() => User)
   async user(
     @Args('id', { type: () => ID }) id: string,
-  ): Promise<Maybe<UserType>> {
+  ): Promise<Maybe<User>> {
     return this.userService.findById(id);
   }
 
   @Mutation(() => UpdateUserOutput)
   async updateUser(
     @Args('input') input: UpdateUserInput,
-    @User() user: UserType,
+    @UserDecorator() user: User,
   ): Promise<UpdateUserOutput> {
     return this.userService.updateOne(input.id, input, user);
   }
