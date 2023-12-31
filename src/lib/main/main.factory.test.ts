@@ -347,17 +347,17 @@ export class User extends CustomBaseEntity {
 
     it('should generate "UserPageType" class', () => {
       expect(tree.readContent('/users/type/user-page.type.ts'))
-        .toEqual(`import { DaoNodePage } from '@app/graphql-type/type/dao-node-page.type';
-import { Field, ObjectType } from '@nestjs/graphql';
+        .toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
+import { MainDaoNodePage } from 'apps/main/src/common/main-dao-node-page.type';
 
-import { UserType } from './user.type';
+import { User } from '../user.entity';
 
 @ObjectType('UserPage', {
-  implements: [DaoNodePage],
+  implements: [MainDaoNodePage],
 })
-export class UserPageType implements DaoNodePage<UserType> {
-  @Field(() => [UserType], { description: 'Nodes in this page' })
-  nodes!: UserType[];
+export class UserPageType implements MainDaoNodePage<User> {
+  @Field(() => [User], { description: 'Nodes in this page' })
+  nodes!: User[];
 }
 `);
     });
