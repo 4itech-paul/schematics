@@ -431,13 +431,13 @@ export class UserWhereInput extends PartialAndOmitType(User, []) {
 
     it('should generate "CreateUserInput" class', () => {
       expect(tree.readContent('/users/input/create-user.input.ts'))
-        .toEqual(`import { Field, ID, InputType } from '@nestjs/graphql';
+        .toEqual(`import { OmitMetaEntityType } from '@app/graphql-type/omit-meta-entity-type';
+import { InputType } from '@nestjs/graphql';
+
+import { User } from '../user.entity';
 
 @InputType()
-export class CreateUserInput {
-  @Field(() => ID, { description: 'Example field' })
-  id!: string;
-}
+export class CreateUserInput extends OmitMetaEntityType(User, [] as const) {}
 `);
     });
 
