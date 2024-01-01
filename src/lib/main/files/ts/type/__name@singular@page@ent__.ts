@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { MainDaoNodePage } from 'apps/main/src/common/main-dao-node-page.type';
 
-import { <%= singular(classify(name)) %> } from '../<%= singular(lowercased(name)) %>.entity';
+import { <%= singular(classify(name)) %> } from '../<%= singular(name) %>.entity';
 
 @ObjectType('<%= singular(classify(name)) %>Page', {
   implements: [MainDaoNodePage],

@@ -1,20 +1,19 @@
-import { <%= singular(classify(name)) %> } from '@app/db/entity/<%= singular(name) %>.entity';
+import { User } from '@app/db/entity/user.entity';
 import { DaoIdNotFoundError } from '@app/graphql-type/error/dao-id-not-found.error';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BaseService, Nullable } from 'apps/main/src/common/base.service';
-import { Maybe } from 'graphql/jsutils/Maybe';
-import { EntityManager, FindOptionsWhere, Repository } from 'typeorm';
+import { BaseService } from 'apps/main/src/common/base.service';
+import { EntityManager, Repository } from 'typeorm';
 
 import { ServiceMetadata } from '../common/service-metadata.interface';
 import { <%= singular(classify(name)) %>PageArgs } from './args/<%= singular(name) %>-page.args';
 import { Create<%= singular(classify(name)) %>Input } from './input/create-<%= singular(name) %>.input';
 import { Update<%= singular(classify(name)) %>Input } from './input/update-<%= singular(name) %>.input';
-import { <%= singular(classify(name)) %>WhereInput } from './input/<%= singular(lowercased(name)) %>-where.input';
 import { Create<%= singular(classify(name)) %>Output } from './output/create-<%= singular(name) %>.output';
 import { Remove<%= singular(classify(name)) %>Output } from './output/remove-<%= singular(name) %>.output';
 import { Update<%= singular(classify(name)) %>Output } from './output/update-<%= singular(name) %>.output';
 import { <%= singular(classify(name)) %>PageType } from './type/<%= singular(name) %>-page.type';
+import { <%= singular(classify(name)) %> } from './<%= singular(name) %>.entity';
 
 @Injectable()
 export class <%= singular(classify(name)) %>Service extends BaseService<<%= singular(classify(name)) %>> {

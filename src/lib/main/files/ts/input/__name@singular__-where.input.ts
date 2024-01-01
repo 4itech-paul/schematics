@@ -3,7 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { Nullable } from 'apps/main/src/common/base.service';
 import { FindOptionsWhere } from 'typeorm';
 
-import { <%= singular(classify(name)) %> } from '../<%= singular(lowercased(name)) %>.entity';
+import { <%= singular(classify(name)) %> } from '../<%= singular(name) %>.entity';
 
 @InputType()
 export class <%= singular(classify(name)) %>WhereInput extends PartialAndOmitType(<%= singular(classify(name)) %>, []) {
