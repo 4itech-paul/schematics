@@ -167,19 +167,18 @@ export class UserResolver {
 import { DaoIdNotFoundError } from '@app/graphql-type/error/dao-id-not-found.error';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BaseService, Nullable } from 'apps/main/src/common/base.service';
-import { Maybe } from 'graphql/jsutils/Maybe';
-import { EntityManager, FindOptionsWhere, Repository } from 'typeorm';
+import { BaseService } from 'apps/main/src/common/base.service';
+import { EntityManager, Repository } from 'typeorm';
 
 import { ServiceMetadata } from '../common/service-metadata.interface';
 import { UserPageArgs } from './args/user-page.args';
 import { CreateUserInput } from './input/create-user.input';
 import { UpdateUserInput } from './input/update-user.input';
-import { UserWhereInput } from './input/user-where.input';
 import { CreateUserOutput } from './output/create-user.output';
 import { RemoveUserOutput } from './output/remove-user.output';
 import { UpdateUserOutput } from './output/update-user.output';
 import { UserPageType } from './type/user-page.type';
+import { User } from './user.entity';
 
 @Injectable()
 export class UserService extends BaseService<User> {
