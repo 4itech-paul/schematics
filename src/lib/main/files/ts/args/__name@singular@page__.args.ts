@@ -1,26 +1,21 @@
 import { DaoNodePageArgs } from '@app/graphql-type/args/dao-node-page.args';
-import { ArgsType, Field } from '@nestjs/graphql';
-import { Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
+import { TypeField } from '@app/util/type-field.decorator';
+import { ArgsType } from '@nestjs/graphql';
 
-import { <%= singular(classify(name)) %>OrderInput } from '../input/<%= singular(name) %>-order.input';
-import { <%= singular(classify(name)) %>WhereInput } from '../input/<%= singular(name) %>-where.input';
+import { <%= classify(singular(name)) %>OrderInput } from '../input/<%= singular(name) %>-order.input';
+import { <%= classify(singular(name)) %>WhereInput } from '../input/<%= singular(name) %>-where.input';
 
 @ArgsType()
-export class <%= singular(classify(name)) %>PageArgs extends DaoNodePageArgs {
-  @ValidateNested()
-  @Type(() => <%= singular(classify(name)) %>OrderInput)
-  @Field(() => <%= singular(classify(name)) %>OrderInput, {
+export class <%= classify(singular(name)) %>PageArgs extends DaoNodePageArgs {
+  @TypeField(() => <%= classify(singular(name)) %>OrderInput, {
     description: '排序欄位與方式',
-    defaultValue: new <%= singular(classify(name)) %>OrderInput(),
+    defaultValue: new <%= classify(singular(name)) %>OrderInput(),
   })
-  order: <%= singular(classify(name)) %>OrderInput = new <%= singular(classify(name)) %>OrderInput();
+  order: <%= classify(singular(name)) %>OrderInput = new <%= classify(singular(name)) %>OrderInput();
 
-  @ValidateNested()
-  @Type(() => <%= singular(classify(name)) %>WhereInput)
-  @Field(() => <%= singular(classify(name)) %>WhereInput, {
+  @TypeField(() => <%= classify(singular(name)) %>WhereInput, {
     description: '查詢條件',
-    defaultValue: new <%= singular(classify(name)) %>WhereInput(),
+    defaultValue: new <%= classify(singular(name)) %>WhereInput(),
   })
-  where: <%= singular(classify(name)) %>WhereInput = new <%= singular(classify(name)) %>WhereInput();
+  where: <%= classify(singular(name)) %>WhereInput = new <%= classify(singular(name)) %>WhereInput();
 }
