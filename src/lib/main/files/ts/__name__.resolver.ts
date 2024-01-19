@@ -1,8 +1,8 @@
-import { User } from '@app/db/entity/user.entity';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
 import { UserDecorator } from '../auth/user.decorator';
+import { User } from '../user/user.entity';
 import { <%= singular(classify(name)) %>PageArgs } from './args/<%= singular(name) %>-page.args';
 import { Create<%= singular(classify(name)) %>Input } from './input/create-<%= singular(name) %>.input';
 import { Remove<%= singular(classify(name)) %>Input } from './input/remove-<%= singular(name) %>.input';
