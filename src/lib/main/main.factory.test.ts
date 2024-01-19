@@ -100,11 +100,11 @@ describe('main Factory', () => {
 
     it('should generate "UsersResolver" class', () => {
       expect(tree.readContent('/users/users.resolver.ts'))
-        .toEqual(`import { User } from '@app/db/entity/user.entity';
-import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+        .toEqual(`import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
 import { UserDecorator } from '../auth/user.decorator';
+import { User } from '../user/user.entity';
 import { UserPageArgs } from './args/user-page.args';
 import { CreateUserInput } from './input/create-user.input';
 import { RemoveUserInput } from './input/remove-user.input';
@@ -163,14 +163,14 @@ export class UserResolver {
     });
     it('should generate "UsersService" class', () => {
       expect(tree.readContent('/users/users.service.ts'))
-        .toEqual(`import { User } from '@app/db/entity/user.entity';
-import { DaoIdNotFoundError } from '@app/graphql-type/error/dao-id-not-found.error';
+        .toEqual(`import { DaoIdNotFoundError } from '@app/graphql-type/error/dao-id-not-found.error';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'apps/main/src/common/base.service';
 import { EntityManager, Repository } from 'typeorm';
 
 import { ServiceMetadata } from '../common/service-metadata.interface';
+import { User } from '../user/user.entity';
 import { UserPageArgs } from './args/user-page.args';
 import { CreateUserInput } from './input/create-user.input';
 import { UpdateUserInput } from './input/update-user.input';
