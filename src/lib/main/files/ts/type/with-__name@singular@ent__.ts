@@ -5,9 +5,9 @@ import { <%= classify(singular(name)) %> } from '../<%= singular(name) %>.entity
 
 @InterfaceType()
 export abstract class With<%= classify(singular(name)) %> {
-  @Field(() => ID, { nullable: true, description: '代理商 ID' })
+  @Field(() => ID, { nullable: true })
   <%= lowercased(singular(name)) %>Id?: Maybe<string>;
 
-  @Field(() => <%= classify(singular(name)) %>, { nullable: true, description: '代理商' })
+  @Field(() => <%= classify(singular(name)) %>, { nullable: true })
   <%= lowercased(singular(name)) %>?: Maybe<<%= classify(singular(name)) %>>;
 }
