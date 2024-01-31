@@ -7,6 +7,11 @@ import { <%= singular(classify(name)) %>Service } from './<%= singular(name) %>.
 
 @Module({
   imports: [TypeOrmModule.forFeature([<%= singular(classify(name)) %>])],
-  providers: [<%= singular(classify(name)) %>Resolver, <%= singular(classify(name)) %>Service],
+  providers: [
+    <%= singular(classify(name)) %>Resolver,
+    <%= singular(classify(name)) %>Service,
+    <%= singular(classify(name)) %>By<%= singular(classify(name)) %>IdLoader,
+    With<%= singular(classify(name)) %>Resolver,
+  ],
 })
 export class <%= singular(classify(name)) %>Module {}
