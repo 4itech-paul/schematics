@@ -14,62 +14,63 @@ describe('main Factory', () => {
   describe('[GraphQL - Code first]', () => {
     it('should generate appropriate files ', async () => {
       const options: MainOptions = {
-        name: 'users',
+        name: 'domain-1',
         crud: true,
         type: 'graphql-code-first',
       };
       const tree = await runner.runSchematic('main', options);
       const files = tree.files;
       expect(files).toEqual([
-        '/users/user.entity.ts',
-        '/users/users-by-users-id.loader.ts',
-        '/users/users.module.ts',
-        '/users/users.resolver.spec.ts',
-        '/users/users.resolver.ts',
-        '/users/users.service.spec.ts',
-        '/users/users.service.ts',
-        '/users/with-users.resolver.ts',
-        '/users/args/user-page.args.ts',
-        '/users/input/user-order.input.ts',
-        '/users/input/user-where.input.ts',
-        '/users/input/create-user.input.ts',
-        '/users/input/remove-user.input.ts',
-        '/users/input/update-user.input.ts',
-        '/users/output/create-user.output.ts',
-        '/users/output/remove-user.output.ts',
-        '/users/output/update-user.output.ts',
-        '/users/type/user-page.type.ts',
+        '/domain-1/domain-1.entity.ts',
+        '/domain-1/domain-1-by-domain-1-id.loader.ts',
+        '/domain-1/domain-1.module.ts',
+        '/domain-1/domain-1.resolver.spec.ts',
+        '/domain-1/domain-1.resolver.ts',
+        '/domain-1/domain-1.service.spec.ts',
+        '/domain-1/domain-1.service.ts',
+        '/domain-1/with-domain-1.resolver.ts',
+        '/domain-1/args/domain-1-page.args.ts',
+        '/domain-1/input/domain-1-order.input.ts',
+        '/domain-1/input/domain-1-where.input.ts',
+        '/domain-1/input/create-domain-1.input.ts',
+        '/domain-1/input/remove-domain-1.input.ts',
+        '/domain-1/input/update-domain-1.input.ts',
+        '/domain-1/output/create-domain-1.output.ts',
+        '/domain-1/output/remove-domain-1.output.ts',
+        '/domain-1/output/update-domain-1.output.ts',
+        '/domain-1/type/domain-1-page.type.ts',
+        '/domain-1/type/with-domain-1.type.ts',
       ]);
     });
     describe('when "crud" option is not enabled', () => {
       it('should generate appropriate files (without dtos)', async () => {
         const options: MainOptions = {
-          name: 'users',
+          name: 'domain-1',
           crud: false,
           type: 'graphql-code-first',
         };
         const tree = await runner.runSchematic('main', options);
         const files = tree.files;
         expect(files).toEqual([
-          '/users/user.entity.ts',
-          '/users/users-by-users-id.loader.ts',
-          '/users/users.module.ts',
-          '/users/users.resolver.spec.ts',
-          '/users/users.resolver.ts',
-          '/users/users.service.spec.ts',
-          '/users/users.service.ts',
-          '/users/with-users.resolver.ts',
-          '/users/args/user-page.args.ts',
-          '/users/output/create-user.output.ts',
-          '/users/output/remove-user.output.ts',
-          '/users/output/update-user.output.ts',
+          '/domain-1/domain-1.entity.ts',
+          '/domain-1/domain-1-by-domain-1-id.loader.ts',
+          '/domain-1/domain-1.module.ts',
+          '/domain-1/domain-1.resolver.spec.ts',
+          '/domain-1/domain-1.resolver.ts',
+          '/domain-1/domain-1.service.spec.ts',
+          '/domain-1/domain-1.service.ts',
+          '/domain-1/with-domain-1.resolver.ts',
+          '/domain-1/args/domain-1-page.args.ts',
+          '/domain-1/output/create-domain-1.output.ts',
+          '/domain-1/output/remove-domain-1.output.ts',
+          '/domain-1/output/update-domain-1.output.ts',
         ]);
       });
     });
     describe('when "spec" option is not enabled', () => {
       it('should generate appropriate files (without dtos)', async () => {
         const options: MainOptions = {
-          name: 'users',
+          name: 'domain-1',
           spec: false,
           crud: false,
           type: 'graphql-code-first',
@@ -77,23 +78,23 @@ describe('main Factory', () => {
         const tree = await runner.runSchematic('main', options);
         const files = tree.files;
         expect(files).toEqual([
-          '/users/user.entity.ts',
-          '/users/users-by-users-id.loader.ts',
-          '/users/users.module.ts',
-          '/users/users.resolver.ts',
-          '/users/users.service.ts',
-          '/users/with-users.resolver.ts',
-          '/users/args/user-page.args.ts',
-          '/users/output/create-user.output.ts',
-          '/users/output/remove-user.output.ts',
-          '/users/output/update-user.output.ts',
+          '/domain-1/domain-1.entity.ts',
+          '/domain-1/domain-1-by-domain-1-id.loader.ts',
+          '/domain-1/domain-1.module.ts',
+          '/domain-1/domain-1.resolver.ts',
+          '/domain-1/domain-1.service.ts',
+          '/domain-1/with-domain-1.resolver.ts',
+          '/domain-1/args/domain-1-page.args.ts',
+          '/domain-1/output/create-domain-1.output.ts',
+          '/domain-1/output/remove-domain-1.output.ts',
+          '/domain-1/output/update-domain-1.output.ts',
         ]);
       });
     });
   });
   describe('[GraphQL - Code first]', () => {
     const options: MainOptions = {
-      name: 'users',
+      name: 'domain-1',
       crud: true,
       type: 'graphql-code-first',
     };
@@ -104,134 +105,309 @@ describe('main Factory', () => {
       tree = await runner.runSchematic('main', options);
     });
 
-    it('should generate "UsersResolver" class', () => {
-      expect(tree.readContent('/users/users.resolver.ts'))
+    it('should generate "domain-1-page.args" class', () => {
+      expect(tree.readContent('/domain-1/args/domain-1-page.args.ts'))
+        .toEqual(`import { DaoNodePageArgs } from '@app/graphql-type/args/dao-node-page.args';
+import { TypeField } from '@app/util/type-field.decorator';
+import { ArgsType } from '@nestjs/graphql';
+
+import { Domain1OrderInput } from '../input/domain-1-order.input';
+import { Domain1WhereInput } from '../input/domain-1-where.input';
+
+@ArgsType()
+export class Domain1PageArgs extends DaoNodePageArgs {
+  @TypeField(() => Domain1OrderInput, {
+    description: '排序欄位與方式',
+    defaultValue: new Domain1OrderInput(),
+  })
+  order: Domain1OrderInput = new Domain1OrderInput();
+
+  @TypeField(() => Domain1WhereInput, {
+    description: '查詢條件',
+    defaultValue: new Domain1WhereInput(),
+  })
+  where: Domain1WhereInput = new Domain1WhereInput();
+}
+`);
+    });
+
+    it('should generate "create-domain-1.input" class', () => {
+      expect(tree.readContent('/domain-1/input/create-domain-1.input.ts'))
+        .toEqual(`import { OmitMetaEntityType } from '@app/graphql-type/omit-meta-entity-type';
+import { InputType } from '@nestjs/graphql';
+
+import { Domain1 } from '../domain-1.entity';
+
+@InputType()
+export class CreateDomain1Input extends OmitMetaEntityType(Domain1, [] as const) {}
+`);
+    });
+
+    it('should generate "domain-1-order.input" class', () => {
+      expect(tree.readContent('/domain-1/input/domain-1-order.input.ts'))
+        .toEqual(`import {
+  DaoNodeOrderInput,
+  DaoNodeOrderValue,
+} from '@app/graphql-type/input/dao-node-order.input';
+import { Field, InputType } from '@nestjs/graphql';
+import { Maybe } from 'graphql/jsutils/Maybe';
+
+@InputType()
+export class Domain1OrderInput extends DaoNodeOrderInput {
+  @Field(() => DaoNodeOrderValue, { nullable: true })
+  exampleField?: Maybe<DaoNodeOrderValue>;
+}
+`);
+    });
+
+    it('should generate "domain-1-where.input" class', () => {
+      expect(tree.readContent('/domain-1/input/domain-1-where.input.ts'))
+        .toEqual(`import { PartialAndOmitType } from '@app/graphql-type/partial-and-omit-type';
+import { InputType } from '@nestjs/graphql';
+import { Nullable } from 'apps/main/src/common/base.service';
+import { FindOptionsWhere } from 'typeorm';
+
+import { Domain1 } from '../domain-1.entity';
+
+@InputType()
+export class Domain1WhereInput extends PartialAndOmitType(Domain1, []) {
+  toFindOptionsWhere(): Nullable<FindOptionsWhere<Domain1>> | undefined {
+    const { ...where } = this;
+
+    return { ...where };
+  }
+}
+`);
+    });
+
+    it('should generate "remove-domain-1.input" class', () => {
+      expect(tree.readContent('/domain-1/input/remove-domain-1.input.ts'))
+        .toEqual(`import { Field, ID, InputType } from '@nestjs/graphql';
+
+@InputType()
+export class RemoveDomain1Input {
+  @Field(() => ID)
+  id!: string;
+}
+`);
+    });
+
+    it('should generate "update-domain-1.input" class', () => {
+      expect(tree.readContent('/domain-1/input/update-domain-1.input.ts'))
+        .toEqual(`import { Field, ID, InputType, PartialType } from '@nestjs/graphql';
+
+import { CreateDomain1Input } from './create-domain-1.input';
+
+@InputType()
+export class UpdateDomain1Input extends PartialType(
+  CreateDomain1Input,
+) {
+  @Field(() => ID)
+  id!: string;
+}
+`);
+    });
+
+    it('should generate "create-domain-1.output" class', () => {
+      expect(tree.readContent('/domain-1/output/create-domain-1.output.ts'))
+        .toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
+
+import { Domain1 } from '../domain-1.entity';
+
+@ObjectType()
+export class CreateDomain1Output {
+  @Field(() => Domain1)
+  domain1!: Domain1;
+}
+`);
+    });
+
+    it('should generate "remove-domain-1.output" class', () => {
+      expect(tree.readContent('/domain-1/output/remove-domain-1.output.ts'))
+        .toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
+
+import { Domain1 } from '../domain-1.entity';
+
+@ObjectType()
+export class RemoveDomain1Output {
+  @Field(() => Domain1)
+  domain1!: Domain1;
+}
+`);
+    });
+
+    it('should generate "update-domain-1.output" class', () => {
+      expect(tree.readContent('/domain-1/output/update-domain-1.output.ts'))
+        .toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
+
+import { Domain1 } from '../domain-1.entity';
+
+@ObjectType()
+export class UpdateDomain1Output {
+  @Field(() => Domain1)
+  domain1!: Domain1;
+}
+`);
+    });
+
+    it('should generate "domain-1-page.type" class', () => {
+      expect(tree.readContent('/domain-1/type/domain-1-page.type.ts'))
+        .toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
+import { MainDaoNodePage } from 'apps/main/src/common/main-dao-node-page.type';
+
+import { Domain1 } from '../domain-1.entity';
+
+@ObjectType('Domain1Page', {
+  implements: [MainDaoNodePage],
+})
+export class Domain1PageType implements MainDaoNodePage<Domain1> {
+  @Field(() => [Domain1], { description: 'Nodes in this page' })
+  nodes!: Domain1[];
+}
+`);
+    });
+
+    it('should generate "domain-1-by-domain-1-id.loader" class', () => {
+      expect(tree.readContent('/domain-1/domain-1-by-domain-1-id.loader.ts'))
+        .toEqual(`// user-loader.service.ts
+import { Injectable, Scope } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import DataLoader from 'dataloader';
+import { Maybe } from 'graphql/jsutils/Maybe';
+import { In, Repository } from 'typeorm';
+
+import { Domain1 } from './domain-1.entity';
+
+@Injectable({ scope: Scope.REQUEST })
+export class Domain1ByDomain1IdLoader extends DataLoader<
+  string,
+  Maybe<Domain1>
+> {
+  constructor(
+    @InjectRepository(Domain1)
+    private readonly repo: Repository<Domain1>,
+  ) {
+    super(async (keys: readonly string[]): Promise<Maybe<Domain1>[]> => {
+      const daos = await this.repo.find({
+        where: {
+          id: In(keys),
+        },
+      });
+      const daoMap = new Map(daos.map((dao) => [dao.id, dao]));
+      return keys.map((key) => daoMap.get(key));
+    });
+  }
+}
+`);
+    });
+
+    it('should generate "domain-1.entity" class', () => {
+      expect(tree.readContent('/domain-1/domain-1.entity.ts'))
+        .toEqual(`import { CustomBaseEntity } from '@app/db/entity/custom-base.entity';
+import { VarcharLength } from '@app/enum/varchar-length.enum';
+import { ColumnField } from '@app/util/column-field.decorator';
+import { ObjectType } from '@nestjs/graphql';
+import { MainDaoNode } from 'apps/main/src/common/main-dao-node.type';
+import { Maybe } from 'graphql/jsutils/Maybe';
+import { Entity } from 'typeorm';
+
+@ObjectType({ implements: [MainDaoNode] })
+@Entity()
+export class Domain1 extends CustomBaseEntity {
+  @ColumnField({
+    type: 'varchar',
+    length: VarcharLength.Short,
+    comment: '#',
+    nullable: true,
+  })
+  exampleField?: Maybe<string>;
+}
+`);
+    });
+
+    it('should generate "domain-1.module" class', () => {
+      expect(tree.readContent('/domain-1/domain-1.module.ts'))
+        .toEqual(`import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { Domain1 } from './domain-1.entity';
+import { Domain1Resolver } from './domain-1.resolver';
+import { Domain1Service } from './domain-1.service';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([Domain1])],
+  providers: [Domain1Resolver, Domain1Service],
+})
+export class Domain1Module {}
+`);
+    });
+
+    it('should generate "domain-1.resolver" class', () => {
+      expect(tree.readContent('/domain-1/domain-1.resolver.ts'))
         .toEqual(`import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
 import { UserDecorator } from '../auth/user.decorator';
 import { User } from '../user/user.entity';
-import { UserPageArgs } from './args/user-page.args';
-import { CreateUserInput } from './input/create-user.input';
-import { RemoveUserInput } from './input/remove-user.input';
-import { UpdateUserInput } from './input/update-user.input';
-import { CreateUserOutput } from './output/create-user.output';
-import { RemoveUserOutput } from './output/remove-user.output';
-import { UpdateUserOutput } from './output/update-user.output';
-import { UserPageType } from './type/user-page.type';
-import { User } from './user.entity';
-import { UserService } from './user.service';
+import { Domain1PageArgs } from './args/domain-1-page.args';
+import { CreateDomain1Input } from './input/create-domain-1.input';
+import { RemoveDomain1Input } from './input/remove-domain-1.input';
+import { UpdateDomain1Input } from './input/update-domain-1.input';
+import { CreateDomain1Output } from './output/create-domain-1.output';
+import { RemoveDomain1Output } from './output/remove-domain-1.output';
+import { UpdateDomain1Output } from './output/update-domain-1.output';
+import { Domain1PageType } from './type/domain-1-page.type';
+import { Domain1 } from './domain-1.entity';
+import { Domain1Service } from './domain-1.service';
 
-@Resolver(() => User)
-export class UserResolver {
+@Resolver(() => Domain1)
+export class Domain1Resolver {
   constructor(
-    private readonly userService: UserService,
+    private readonly domain1Service: Domain1Service,
   ) {}
 
-  @Mutation(() => CreateUserOutput)
-  async createUser(
-    @Args('input') input: CreateUserInput,
+  @Mutation(() => CreateDomain1Output)
+  async createDomain1(
+    @Args('input') input: CreateDomain1Input,
     @UserDecorator() user: User,
-  ): Promise<CreateUserOutput> {
-    return this.userService.createOne(input, user);
+  ): Promise<CreateDomain1Output> {
+    return this.domain1Service.createOne(input, user);
   }
 
-  @Query(() => UserPageType)
-  async userPage(
-    @Args() args: UserPageArgs,
-  ): Promise<UserPageType> {
-    return this.userService.findByPageArgs(args);
+  @Query(() => Domain1PageType)
+  async domain1Page(
+    @Args() args: Domain1PageArgs,
+  ): Promise<Domain1PageType> {
+    return this.domain1Service.findByPageArgs(args);
   }
 
-  @Query(() => User)
-  async user(
+  @Query(() => Domain1)
+  async domain1(
     @Args('id', { type: () => ID }) id: string,
-  ): Promise<Maybe<User>> {
-    return this.userService.findById(id);
+  ): Promise<Maybe<Domain1>> {
+    return this.domain1Service.findById(id);
   }
 
-  @Mutation(() => UpdateUserOutput)
-  async updateUser(
-    @Args('input') input: UpdateUserInput,
+  @Mutation(() => UpdateDomain1Output)
+  async updateDomain1(
+    @Args('input') input: UpdateDomain1Input,
     @UserDecorator() user: User,
-  ): Promise<UpdateUserOutput> {
-    return this.userService.updateOne(input.id, input, user);
+  ): Promise<UpdateDomain1Output> {
+    return this.domain1Service.updateOne(input.id, input, user);
   }
 
-  @Mutation(() => RemoveUserOutput)
-  async removeUser(
-    @Args('input') input: RemoveUserInput,
-  ): Promise<RemoveUserOutput> {
-    return this.userService.removeOne(input.id);
+  @Mutation(() => RemoveDomain1Output)
+  async removeDomain1(
+    @Args('input') input: RemoveDomain1Input,
+  ): Promise<RemoveDomain1Output> {
+    return this.domain1Service.removeOne(input.id);
   }
 }
 `);
     });
-    it('should generate "UsersResolver" class', () => {
-      expect(tree.readContent('/users/users.resolver.ts'))
-        .toEqual(`import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Maybe } from 'graphql/jsutils/Maybe';
 
-import { UserDecorator } from '../auth/user.decorator';
-import { User } from '../user/user.entity';
-import { UserPageArgs } from './args/user-page.args';
-import { CreateUserInput } from './input/create-user.input';
-import { RemoveUserInput } from './input/remove-user.input';
-import { UpdateUserInput } from './input/update-user.input';
-import { CreateUserOutput } from './output/create-user.output';
-import { RemoveUserOutput } from './output/remove-user.output';
-import { UpdateUserOutput } from './output/update-user.output';
-import { UserPageType } from './type/user-page.type';
-import { User } from './user.entity';
-import { UserService } from './user.service';
-
-@Resolver(() => User)
-export class UserResolver {
-  constructor(
-    private readonly userService: UserService,
-  ) {}
-
-  @Mutation(() => CreateUserOutput)
-  async createUser(
-    @Args('input') input: CreateUserInput,
-    @UserDecorator() user: User,
-  ): Promise<CreateUserOutput> {
-    return this.userService.createOne(input, user);
-  }
-
-  @Query(() => UserPageType)
-  async userPage(
-    @Args() args: UserPageArgs,
-  ): Promise<UserPageType> {
-    return this.userService.findByPageArgs(args);
-  }
-
-  @Query(() => User)
-  async user(
-    @Args('id', { type: () => ID }) id: string,
-  ): Promise<Maybe<User>> {
-    return this.userService.findById(id);
-  }
-
-  @Mutation(() => UpdateUserOutput)
-  async updateUser(
-    @Args('input') input: UpdateUserInput,
-    @UserDecorator() user: User,
-  ): Promise<UpdateUserOutput> {
-    return this.userService.updateOne(input.id, input, user);
-  }
-
-  @Mutation(() => RemoveUserOutput)
-  async removeUser(
-    @Args('input') input: RemoveUserInput,
-  ): Promise<RemoveUserOutput> {
-    return this.userService.removeOne(input.id);
-  }
-}
-`);
-    });
-    it('should generate "UsersService" class', () => {
-      expect(tree.readContent('/users/users.service.ts'))
+    it('should generate "domain-1.service" class', () => {
+      expect(tree.readContent('/domain-1/domain-1.service.ts'))
         .toEqual(`import { DaoIdNotFoundError } from '@app/graphql-type/error/dao-id-not-found.error';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -240,44 +416,44 @@ import { EntityManager, Repository } from 'typeorm';
 
 import { ServiceMetadata } from '../common/service-metadata.interface';
 import { User } from '../user/user.entity';
-import { UserPageArgs } from './args/user-page.args';
-import { CreateUserInput } from './input/create-user.input';
-import { UpdateUserInput } from './input/update-user.input';
-import { CreateUserOutput } from './output/create-user.output';
-import { RemoveUserOutput } from './output/remove-user.output';
-import { UpdateUserOutput } from './output/update-user.output';
-import { UserPageType } from './type/user-page.type';
-import { User } from './user.entity';
+import { Domain1PageArgs } from './args/domain-1-page.args';
+import { CreateDomain1Input } from './input/create-domain-1.input';
+import { UpdateDomain1Input } from './input/update-domain-1.input';
+import { CreateDomain1Output } from './output/create-domain-1.output';
+import { RemoveDomain1Output } from './output/remove-domain-1.output';
+import { UpdateDomain1Output } from './output/update-domain-1.output';
+import { Domain1PageType } from './type/domain-1-page.type';
+import { Domain1 } from './domain-1.entity';
 
 @Injectable()
-export class UserService extends BaseService<User> {
+export class Domain1Service extends BaseService<Domain1> {
   constructor(
     private readonly manager: EntityManager,
-    @InjectRepository(User)
-    private readonly userRepo: Repository<User>,
+    @InjectRepository(Domain1)
+    private readonly domain1Repo: Repository<Domain1>,
   ) {
-    super(userRepo);
+    super(domain1Repo);
   }
 
   async createOne(
-    input: CreateUserInput,
+    input: CreateDomain1Input,
     user: User,
     metadata?: Pick<ServiceMetadata, 'manager'>,
-  ): Promise<CreateUserOutput> {
+  ): Promise<CreateDomain1Output> {
     const create = async (manager: EntityManager) => {
-      const userRepo = manager.getRepository(User);
+      const domain1Repo = manager.getRepository(Domain1);
 
-      const user = userRepo.create({
+      const domain1 = domain1Repo.create({
         ...input,
         createdBy: user.id,
         updatedBy: user.id,
       });
 
-      await userRepo.save(
-        user,
+      await domain1Repo.save(
+        domain1,
       );
 
-      return { user };
+      return { domain1 };
     };
 
     if (metadata?.manager) {
@@ -288,9 +464,9 @@ export class UserService extends BaseService<User> {
   }
 
   async findByPageArgs(
-    args: UserPageArgs,
+    args: Domain1PageArgs,
     metadata?: Pick<ServiceMetadata, 'manager'>,
-  ): Promise<UserPageType> {
+  ): Promise<Domain1PageType> {
     return this.findNodePage(
       { ...args, where: args.where.toFindOptionsWhere() },
       metadata,
@@ -300,39 +476,39 @@ export class UserService extends BaseService<User> {
   async findById(
     id: string,
     metadata?: Pick<ServiceMetadata, 'manager'>,
-  ): Promise<User | null> {
+  ): Promise<Domain1 | null> {
     if (metadata?.manager) {
-      const userRepo = metadata.manager.getRepository(User);
-      return userRepo.findOneBy({ id });
+      const domain1Repo = metadata.manager.getRepository(Domain1);
+      return domain1Repo.findOneBy({ id });
     }
 
-    return this.userRepo.findOneBy({ id });
+    return this.domain1Repo.findOneBy({ id });
   }
 
   async updateOne(
     id: string,
-    input: UpdateUserInput,
+    input: UpdateDomain1Input,
     user: User,
     metadata?: Pick<ServiceMetadata, 'manager'>,
-  ): Promise<UpdateUserOutput> {
+  ): Promise<UpdateDomain1Output> {
     const update = async (manager: EntityManager) => {
-      const userRepo = manager.getRepository(User);
+      const domain1Repo = manager.getRepository(Domain1);
 
-      const user = await userRepo.preload({
+      const domain1 = await domain1Repo.preload({
         ...input,
         updatedBy: user.id,
         id,
       });
-      if (!user) {
-        throw new DaoIdNotFoundError(User, id);
+      if (!domain1) {
+        throw new DaoIdNotFoundError(Domain1, id);
       }
 
-      await userRepo.save(
-        user,
+      await domain1Repo.save(
+        domain1,
       );
 
       return {
-        user,
+        domain1,
       };
     };
 
@@ -346,19 +522,19 @@ export class UserService extends BaseService<User> {
   async removeOne(
     id: string,
     metadata?: Pick<ServiceMetadata, 'manager'>,
-  ): Promise<RemoveUserOutput> {
+  ): Promise<RemoveDomain1Output> {
     const remove = async (manager: EntityManager) => {
-      const userRepo = manager.getRepository(User);
+      const domain1Repo = manager.getRepository(Domain1);
 
-      const user = await userRepo.findOneBy({ id });
-      if (!user) {
-        throw new DaoIdNotFoundError(User, id);
+      const domain1 = await domain1Repo.findOneBy({ id });
+      if (!domain1) {
+        throw new DaoIdNotFoundError(Domain1, id);
       }
 
-      await userRepo.softRemove(user);
+      await domain1Repo.softRemove(domain1);
 
       return {
-        user,
+        domain1,
       };
     };
 
@@ -372,204 +548,29 @@ export class UserService extends BaseService<User> {
 `);
     });
 
-    it('should generate "UsersModule" class', () => {
-      expect(tree.readContent('/users/users.module.ts'))
-        .toEqual(`import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-
-import { User } from './user.entity';
-import { UserResolver } from './user.resolver';
-import { UserService } from './user.service';
-
-@Module({
-  imports: [TypeOrmModule.forFeature([User])],
-  providers: [UserResolver, UserService],
-})
-export class UserModule {}
-`);
-    });
-
-    it('should generate "User" class', () => {
-      expect(tree.readContent('/users/user.entity.ts'))
-        .toEqual(`import { CustomBaseEntity } from '@app/db/entity/custom-base.entity';
-import { VarcharLength } from '@app/enum/varchar-length.enum';
-import { Field, ObjectType } from '@nestjs/graphql';
-import { MainDaoNode } from 'apps/main/src/common/main-dao-node.type';
-import { Maybe } from 'graphql/jsutils/Maybe';
-import { Column, Entity } from 'typeorm';
-
-@ObjectType({ implements: [MainDaoNode] })
-@Entity()
-export class User extends CustomBaseEntity {
-  @Field(() => String, { description: '#', nullable: true })
-  @Column({
-    type: 'varchar',
-    length: VarcharLength.Short,
-    comment: '#',
-    nullable: true,
-  })
-  exampleField?: Maybe<string>;
-}
-`);
-    });
-
-    it('should generate "UserPageType" class', () => {
-      expect(tree.readContent('/users/type/user-page.type.ts'))
-        .toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
-import { MainDaoNodePage } from 'apps/main/src/common/main-dao-node-page.type';
-
-import { User } from '../user.entity';
-
-@ObjectType('UserPage', {
-  implements: [MainDaoNodePage],
-})
-export class UserPageType implements MainDaoNodePage<User> {
-  @Field(() => [User], { description: 'Nodes in this page' })
-  nodes!: User[];
-}
-`);
-    });
-
-    it('should generate "UserPageArgs" class', () => {
-      expect(tree.readContent('/users/args/user-page.args.ts'))
-        .toEqual(`import { DaoNodePageArgs } from '@app/graphql-type/args/dao-node-page.args';
-import { TypeField } from '@app/util/type-field.decorator';
-import { ArgsType } from '@nestjs/graphql';
-
-import { UserOrderInput } from '../input/user-order.input';
-import { UserWhereInput } from '../input/user-where.input';
-
-@ArgsType()
-export class UserPageArgs extends DaoNodePageArgs {
-  @TypeField(() => UserOrderInput, {
-    description: '排序欄位與方式',
-    defaultValue: new UserOrderInput(),
-  })
-  order: UserOrderInput = new UserOrderInput();
-
-  @TypeField(() => UserWhereInput, {
-    description: '查詢條件',
-    defaultValue: new UserWhereInput(),
-  })
-  where: UserWhereInput = new UserWhereInput();
-}
-`);
-    });
-
-    it('should generate "UserOrderInput" class', () => {
-      expect(tree.readContent('/users/input/user-order.input.ts'))
-        .toEqual(`import {
-  DaoNodeOrderInput,
-  DaoNodeOrderValue,
-} from '@app/graphql-type/input/dao-node-order.input';
-import { Field, InputType } from '@nestjs/graphql';
+    it('should generate "with-domain-1.resolver" class', () => {
+      expect(tree.readContent('/domain-1/with-domain-1.resolver.ts'))
+        .toEqual(`import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
-@InputType()
-export class UserOrderInput extends DaoNodeOrderInput {
-  @Field(() => DaoNodeOrderValue, { nullable: true })
-  exampleField?: Maybe<DaoNodeOrderValue>;
-}
-`);
-    });
+import { Domain1ByDomain1IdLoader } from './domain-1-by-domain-1-id.loader';
+import { Domain1 } from './domain-1.entity';
+import { WithDomain1 } from './type/with-domain-1.type';
 
-    it('should generate "UserWhereInput" class', () => {
-      expect(tree.readContent('/users/input/user-where.input.ts'))
-        .toEqual(`import { PartialAndOmitType } from '@app/graphql-type/partial-and-omit-type';
-import { InputType } from '@nestjs/graphql';
-import { Nullable } from 'apps/main/src/common/base.service';
-import { FindOptionsWhere } from 'typeorm';
+@Resolver(() => WithDomain1)
+export class WithDomain1Resolver {
+  constructor(
+    private readonly loader: Domain1ByDomain1IdLoader,
+  ) {}
 
-import { User } from '../user.entity';
-
-@InputType()
-export class UserWhereInput extends PartialAndOmitType(User, []) {
-  toFindOptionsWhere(): Nullable<FindOptionsWhere<User>> | undefined {
-    const { ...where } = this;
-    return { ...where };
+  @ResolveField(() => Domain1, { nullable: true })
+  async domain1(
+    @Parent() { domain1Id, domain1 }: WithDomain1,
+  ): Promise<Maybe<Domain1>> {
+    if (domain1 || !domain1Id) return;
+    return this.loader.load(domain1Id);
   }
 }
-`);
-    });
-
-    it('should generate "CreateUserInput" class', () => {
-      expect(tree.readContent('/users/input/create-user.input.ts'))
-        .toEqual(`import { OmitMetaEntityType } from '@app/graphql-type/omit-meta-entity-type';
-import { InputType } from '@nestjs/graphql';
-
-import { User } from '../user.entity';
-
-@InputType()
-export class CreateUserInput extends OmitMetaEntityType(User, [] as const) {}
-`);
-    });
-
-    it('should generate "UpdateUserInput" class', () => {
-      expect(tree.readContent('/users/input/update-user.input.ts'))
-        .toEqual(`import { Field, ID, InputType, PartialType } from '@nestjs/graphql';
-
-import { CreateUserInput } from './create-user.input';
-
-@InputType()
-export class UpdateUserInput extends PartialType(
-  CreateUserInput,
-) {
-  @Field(() => ID)
-  id!: string;
-}
-`);
-    });
-
-    it('should generate "UsersResolver" spec file', () => {
-      expect(tree.readContent('/users/users.resolver.spec.ts'))
-        .toEqual(`import { Test, TestingModule } from '@nestjs/testing';
-
-import { UsersResolver } from './users.resolver';
-import { UsersService } from './users.service';
-
-describe('UsersResolver', () => {
-  let resolver: UsersResolver;
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersResolver, UsersService],
-    }).compile();
-
-    resolver = module.get<UsersResolver>(
-      UsersResolver,
-    );
-  });
-
-  it('should be defined', () => {
-    expect(resolver).toBeDefined();
-  });
-});
-`);
-    });
-
-    it('should generate "UsersService" spec file', () => {
-      expect(tree.readContent('/users/users.service.spec.ts'))
-        .toEqual(`import { Test, TestingModule } from '@nestjs/testing';
-
-import { UsersService } from './users.service';
-
-describe('UsersService', () => {
-  let service: UsersService;
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService],
-    }).compile();
-
-    service = module.get<UsersService>(
-      UsersService,
-    );
-  });
-
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-});
 `);
     });
   });
