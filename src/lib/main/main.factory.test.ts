@@ -267,6 +267,24 @@ export class Domain1PageType implements MainDaoNodePage<Domain1> {
 `);
     });
 
+    it('should generate "with-domain-1.type" class', () => {
+      expect(tree.readContent('/domain-1/type/with-domain-1.type.ts'))
+        .toEqual(`import { Field, ID, InterfaceType } from '@nestjs/graphql';
+import { Maybe } from 'graphql/jsutils/Maybe';
+
+import { Domain1 } from '../domain-1.entity';
+
+@InterfaceType()
+export abstract class WithDomain1 {
+  @Field(() => ID, { nullable: true, description: '代理商 ID' })
+  domain1Id?: Maybe<string>;
+
+  @Field(() => Domain1, { nullable: true, description: '代理商' })
+  domain1?: Maybe<Domain1>;
+}
+`);
+    });
+
     it('should generate "domain-1-by-domain-1-id.loader" class', () => {
       expect(tree.readContent('/domain-1/domain-1-by-domain-1-id.loader.ts'))
         .toEqual(`// user-loader.service.ts
