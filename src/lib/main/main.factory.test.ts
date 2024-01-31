@@ -590,8 +590,9 @@ export class WithDomain1Resolver {
   async domain1(
     @Parent() { domain1Id, domain1 }: WithDomain1,
   ): Promise<Maybe<Domain1>> {
-    if (domain1 || !domain1Id) return;
-    return this.loader.load(domain1Id);
+    if (domain1) return domain1;
+    if (domain1Id) return this.loader.load(domain1Id);
+    return null;
   }
 }
 `);
