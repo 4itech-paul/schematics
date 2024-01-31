@@ -15,7 +15,8 @@ export class With<%= classify(singular(name)) %>Resolver {
   async <%= lowercased(singular(name)) %>(
     @Parent() { <%= lowercased(singular(name)) %>Id, <%= lowercased(singular(name)) %> }: With<%= classify(singular(name)) %>,
   ): Promise<Maybe<<%= classify(singular(name)) %>>> {
-    if (<%= lowercased(singular(name)) %> || !<%= lowercased(singular(name)) %>Id) return;
-    return this.loader.load(<%= lowercased(singular(name)) %>Id);
+    if (<%= lowercased(singular(name)) %>) return <%= lowercased(singular(name)) %>;
+    if (<%= lowercased(singular(name)) %>Id) return this.loader.load(<%= lowercased(singular(name)) %>Id);
+    return null;
   }
 }
