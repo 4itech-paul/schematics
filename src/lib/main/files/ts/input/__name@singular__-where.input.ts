@@ -9,6 +9,7 @@ import { <%= singular(classify(name)) %> } from '../<%= singular(name) %>.entity
 export class <%= singular(classify(name)) %>WhereInput extends PartialAndOmitType(<%= singular(classify(name)) %>, []) {
   toFindOptionsWhere(): Nullable<FindOptionsWhere<<%= singular(classify(name)) %>>> | undefined {
     const { ...where } = this;
+
     return { ...where };
   }
 }
