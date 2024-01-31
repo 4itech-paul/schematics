@@ -276,10 +276,10 @@ import { Domain1 } from '../domain-1.entity';
 
 @InterfaceType()
 export abstract class WithDomain1 {
-  @Field(() => ID, { nullable: true, description: '代理商 ID' })
+  @Field(() => ID, { nullable: true })
   domain1Id?: Maybe<string>;
 
-  @Field(() => Domain1, { nullable: true, description: '代理商' })
+  @Field(() => Domain1, { nullable: true })
   domain1?: Maybe<Domain1>;
 }
 `);
