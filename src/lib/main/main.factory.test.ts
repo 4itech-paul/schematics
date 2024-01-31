@@ -22,11 +22,13 @@ describe('main Factory', () => {
       const files = tree.files;
       expect(files).toEqual([
         '/users/user.entity.ts',
+        '/users/users-by-users-id.loader.ts',
         '/users/users.module.ts',
         '/users/users.resolver.spec.ts',
         '/users/users.resolver.ts',
         '/users/users.service.spec.ts',
         '/users/users.service.ts',
+        '/users/with-users.resolver.ts',
         '/users/args/user-page.args.ts',
         '/users/input/user-order.input.ts',
         '/users/input/user-where.input.ts',
@@ -50,11 +52,13 @@ describe('main Factory', () => {
         const files = tree.files;
         expect(files).toEqual([
           '/users/user.entity.ts',
+          '/users/users-by-users-id.loader.ts',
           '/users/users.module.ts',
           '/users/users.resolver.spec.ts',
           '/users/users.resolver.ts',
           '/users/users.service.spec.ts',
           '/users/users.service.ts',
+          '/users/with-users.resolver.ts',
           '/users/args/user-page.args.ts',
           '/users/output/create-user.output.ts',
           '/users/output/remove-user.output.ts',
@@ -74,9 +78,11 @@ describe('main Factory', () => {
         const files = tree.files;
         expect(files).toEqual([
           '/users/user.entity.ts',
+          '/users/users-by-users-id.loader.ts',
           '/users/users.module.ts',
           '/users/users.resolver.ts',
           '/users/users.service.ts',
+          '/users/with-users.resolver.ts',
           '/users/args/user-page.args.ts',
           '/users/output/create-user.output.ts',
           '/users/output/remove-user.output.ts',
@@ -98,6 +104,69 @@ describe('main Factory', () => {
       tree = await runner.runSchematic('main', options);
     });
 
+    it('should generate "UsersResolver" class', () => {
+      expect(tree.readContent('/users/users.resolver.ts'))
+        .toEqual(`import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Maybe } from 'graphql/jsutils/Maybe';
+
+import { UserDecorator } from '../auth/user.decorator';
+import { User } from '../user/user.entity';
+import { UserPageArgs } from './args/user-page.args';
+import { CreateUserInput } from './input/create-user.input';
+import { RemoveUserInput } from './input/remove-user.input';
+import { UpdateUserInput } from './input/update-user.input';
+import { CreateUserOutput } from './output/create-user.output';
+import { RemoveUserOutput } from './output/remove-user.output';
+import { UpdateUserOutput } from './output/update-user.output';
+import { UserPageType } from './type/user-page.type';
+import { User } from './user.entity';
+import { UserService } from './user.service';
+
+@Resolver(() => User)
+export class UserResolver {
+  constructor(
+    private readonly userService: UserService,
+  ) {}
+
+  @Mutation(() => CreateUserOutput)
+  async createUser(
+    @Args('input') input: CreateUserInput,
+    @UserDecorator() user: User,
+  ): Promise<CreateUserOutput> {
+    return this.userService.createOne(input, user);
+  }
+
+  @Query(() => UserPageType)
+  async userPage(
+    @Args() args: UserPageArgs,
+  ): Promise<UserPageType> {
+    return this.userService.findByPageArgs(args);
+  }
+
+  @Query(() => User)
+  async user(
+    @Args('id', { type: () => ID }) id: string,
+  ): Promise<Maybe<User>> {
+    return this.userService.findById(id);
+  }
+
+  @Mutation(() => UpdateUserOutput)
+  async updateUser(
+    @Args('input') input: UpdateUserInput,
+    @UserDecorator() user: User,
+  ): Promise<UpdateUserOutput> {
+    return this.userService.updateOne(input.id, input, user);
+  }
+
+  @Mutation(() => RemoveUserOutput)
+  async removeUser(
+    @Args('input') input: RemoveUserInput,
+  ): Promise<RemoveUserOutput> {
+    return this.userService.removeOne(input.id);
+  }
+}
+`);
+    });
     it('should generate "UsersResolver" class', () => {
       expect(tree.readContent('/users/users.resolver.ts'))
         .toEqual(`import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
