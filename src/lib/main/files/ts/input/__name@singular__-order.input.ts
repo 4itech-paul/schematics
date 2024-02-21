@@ -1,12 +1,7 @@
-<% if (type === 'graphql-code-first') { %>import {
-  DaoNodeOrderInput,
-  DaoNodeOrderValue,
-} from '@app/graphql-type/input/dao-node-order.input';
-import { Field, InputType } from '@nestjs/graphql';
-import { Maybe } from 'graphql/jsutils/Maybe';
+import { ToOrderInputType } from '@app/graphql-type/to-order-input-type';
+import { InputType } from '@nestjs/graphql';
+
+import { <%= classify(singular(name)) %> } from '../<%= singular(name) %>.entity';
 
 @InputType()
-export class <%= singular(classify(name)) %>OrderInput extends DaoNodeOrderInput {
-  @Field(() => DaoNodeOrderValue, { nullable: true })
-  exampleField?: Maybe<DaoNodeOrderValue>;
-}<% } else { %>export class Create<%= singular(classify(name)) %>Input {}<% } %>
+export class <%= classify(singular(name)) %>OrderInput extends ToOrderInputType(<%= classify(singular(name)) %>) {}
