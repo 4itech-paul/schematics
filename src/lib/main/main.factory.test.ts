@@ -133,36 +133,31 @@ export class Domain1PageArgs extends DaoNodePageArgs {
 
     it('should generate "create-domain-1.input" class', () => {
       expect(tree.readContent('/domain-1/input/create-domain-1.input.ts'))
-        .toEqual(`import { OmitMetaEntityType } from '@app/graphql-type/omit-meta-entity-type';
+        .toEqual(`import { ToCreateInputType } from '@app/graphql-type/to-create-input-type';
 import { InputType } from '@nestjs/graphql';
 
 import { Domain1 } from '../domain-1.entity';
 
 @InputType()
-export class CreateDomain1Input extends OmitMetaEntityType(Domain1, [] as const) {}
+export class CreateDomain1Input extends ToCreateInputType(Domain1) {}
 `);
     });
 
     it('should generate "domain-1-order.input" class', () => {
       expect(tree.readContent('/domain-1/input/domain-1-order.input.ts'))
-        .toEqual(`import {
-  DaoNodeOrderInput,
-  DaoNodeOrderValue,
-} from '@app/graphql-type/input/dao-node-order.input';
-import { Field, InputType } from '@nestjs/graphql';
-import { Maybe } from 'graphql/jsutils/Maybe';
+        .toEqual(`import { ToOrderInputType } from '@app/graphql-type/to-order-input-type';
+import { InputType } from '@nestjs/graphql';
+
+import { Domain1 } from '../domain-1.entity';
 
 @InputType()
-export class Domain1OrderInput extends DaoNodeOrderInput {
-  @Field(() => DaoNodeOrderValue, { nullable: true })
-  exampleField?: Maybe<DaoNodeOrderValue>;
-}
+export class Domain1OrderInput extends ToOrderInputType(Domain1) {}
 `);
     });
 
     it('should generate "domain-1-where.input" class', () => {
       expect(tree.readContent('/domain-1/input/domain-1-where.input.ts'))
-        .toEqual(`import { PartialAndOmitType } from '@app/graphql-type/partial-and-omit-type';
+        .toEqual(`import { ToWhereInputType } from '@app/graphql-type/to-where-input-type';
 import { InputType } from '@nestjs/graphql';
 import { Nullable } from 'apps/main/src/common/base.service';
 import { FindOptionsWhere } from 'typeorm';
@@ -170,7 +165,7 @@ import { FindOptionsWhere } from 'typeorm';
 import { Domain1 } from '../domain-1.entity';
 
 @InputType()
-export class Domain1WhereInput extends PartialAndOmitType(Domain1, []) {
+export class Domain1WhereInput extends ToWhereInputType(Domain1) {
   toFindOptionsWhere(): Nullable<FindOptionsWhere<Domain1>> | undefined {
     const { ...where } = this;
 
