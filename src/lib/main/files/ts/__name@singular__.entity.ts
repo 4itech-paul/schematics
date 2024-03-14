@@ -12,7 +12,7 @@ export class <%= singular(classify(name)) %> extends CustomBaseEntity {
   @ColumnField({
     type: 'varchar',
     length: VarcharLength.Short,
-    comment: '#',
+    comment: '',
     nullable: true,
   })
   exampleField?: Maybe<string>;

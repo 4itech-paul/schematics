@@ -6,57 +6,52 @@ import { EntityManager, Repository } from 'typeorm';
 
 import { ServiceMetadata } from '../common/service-metadata.interface';
 import { User } from '../user/user.entity';
-import { <%= singular(classify(name)) %>PageArgs } from './args/<%= singular(name) %>-page.args';
-import { Create<%= singular(classify(name)) %>Input } from './input/create-<%= singular(name) %>.input';
-import { Update<%= singular(classify(name)) %>Input } from './input/update-<%= singular(name) %>.input';
-import { Create<%= singular(classify(name)) %>Output } from './output/create-<%= singular(name) %>.output';
-import { Remove<%= singular(classify(name)) %>Output } from './output/remove-<%= singular(name) %>.output';
-import { Update<%= singular(classify(name)) %>Output } from './output/update-<%= singular(name) %>.output';
-import { <%= singular(classify(name)) %>PageType } from './type/<%= singular(name) %>-page.type';
-import { <%= singular(classify(name)) %> } from './<%= singular(name) %>.entity';
+import { Domain1PageArgs } from './args/<%= singular(name) %>-page.args';
+import { <%= classify(singular(name)) %> } from './<%= singular(name) %>.entity';
+import { CreateDomain1Input } from './input/create-<%= singular(name) %>.input';
+import { UpdateDomain1Input } from './input/update-<%= singular(name) %>.input';
+import { CreateDomain1Output } from './output/create-<%= singular(name) %>.output';
+import { RemoveDomain1Output } from './output/remove-<%= singular(name) %>.output';
+import { UpdateDomain1Output } from './output/update-<%= singular(name) %>.output';
+import { Domain1PageType } from './type/<%= singular(name) %>-page.type';
 
 @Injectable()
-export class <%= singular(classify(name)) %>Service extends BaseService<<%= singular(classify(name)) %>> {
+export class <%= classify(singular(name)) %>Service extends BaseService<<%= classify(singular(name)) %>> {
   constructor(
     private readonly manager: EntityManager,
-    @InjectRepository(<%= singular(classify(name)) %>)
-    private readonly <%= singular(lowercased(name)) %>Repo: Repository<<%= singular(classify(name)) %>>,
+    @InjectRepository(<%= classify(singular(name)) %>)
+    private readonly domain1Repo: Repository<<%= classify(singular(name)) %>>,
   ) {
-    super(<%= singular(lowercased(name)) %>Repo);
+    super(<%= lowercased(singular(name)) %>Repo);
   }
 
   async createOne(
-    input: Create<%= singular(classify(name)) %>Input,
+    input: CreateDomain1Input,
     user: User,
     metadata?: Pick<ServiceMetadata, 'manager'>,
-  ): Promise<Create<%= singular(classify(name)) %>Output> {
-    const create = async (manager: EntityManager) => {
-      const <%= singular(lowercased(name)) %>Repo = manager.getRepository(<%= singular(classify(name)) %>);
-
-      const <%= singular(lowercased(name)) %> = <%= singular(lowercased(name)) %>Repo.create({
-        ...input,
-        createdBy: user.id,
-        updatedBy: user.id,
-      });
-
-      await <%= singular(lowercased(name)) %>Repo.save(
-        <%= singular(lowercased(name)) %>,
+  ): Promise<CreateDomain1Output> {
+    const transaction = async (manager: EntityManager) => {
+      const <%= lowercased(singular(name)) %> = await this.save(
+        {
+          ...input,
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+        { manager },
       );
 
-      return { <%= singular(lowercased(name)) %> };
+      return { <%= lowercased(singular(name)) %> };
     };
 
-    if (metadata?.manager) {
-      return create(metadata.manager);
-    }
-
-    return this.manager.transaction('READ COMMITTED', create);
+    return metadata?.manager
+      ? transaction(metadata.manager)
+      : this.manager.transaction('READ COMMITTED', transaction);
   }
 
   async findByPageArgs(
-    args: <%= singular(classify(name)) %>PageArgs,
+    args: Domain1PageArgs,
     metadata?: Pick<ServiceMetadata, 'manager'>,
-  ): Promise<<%= singular(classify(name)) %>PageType> {
+  ): Promise<Domain1PageType> {
     return this.findNodePage(
       { ...args, where: args.where.toFindOptionsWhere() },
       metadata,
@@ -66,72 +61,61 @@ export class <%= singular(classify(name)) %>Service extends BaseService<<%= sing
   async findById(
     id: string,
     metadata?: Pick<ServiceMetadata, 'manager'>,
-  ): Promise<<%= singular(classify(name)) %> | null> {
+  ): Promise<<%= classify(singular(name)) %> | null> {
     if (metadata?.manager) {
-      const <%= singular(lowercased(name)) %>Repo = metadata.manager.getRepository(<%= singular(classify(name)) %>);
-      return <%= singular(lowercased(name)) %>Repo.findOneBy({ id });
+      const domain1Repo = metadata.manager.getRepository(<%= classify(singular(name)) %>);
+      return domain1Repo.findOneBy({ id });
     }
 
-    return this.<%= singular(lowercased(name)) %>Repo.findOneBy({ id });
+    return this.domain1Repo.findOneBy({ id });
   }
 
   async updateOne(
     id: string,
-    input: Update<%= singular(classify(name)) %>Input,
+    input: UpdateDomain1Input,
     user: User,
     metadata?: Pick<ServiceMetadata, 'manager'>,
-  ): Promise<Update<%= singular(classify(name)) %>Output> {
-    const update = async (manager: EntityManager) => {
-      const <%= singular(lowercased(name)) %>Repo = manager.getRepository(<%= singular(classify(name)) %>);
+  ): Promise<UpdateDomain1Output> {
+    const transaction = async (manager: EntityManager) => {
+      const domain1Repo = manager.getRepository(<%= classify(singular(name)) %>);
 
-      const <%= singular(lowercased(name)) %> = await <%= singular(lowercased(name)) %>Repo.preload({
+      const <%= lowercased(singular(name)) %> = await domain1Repo.preload({
         ...input,
         updatedBy: user.id,
         id,
       });
-      if (!<%= singular(lowercased(name)) %>) {
-        throw new DaoIdNotFoundError(<%= singular(classify(name)) %>, id);
+      if (!<%= lowercased(singular(name)) %>) {
+        throw new DaoIdNotFoundError(<%= classify(singular(name)) %>, id);
       }
 
-      await <%= singular(lowercased(name)) %>Repo.save(
-        <%= singular(lowercased(name)) %>,
-      );
+      await domain1Repo.save(<%= lowercased(singular(name)) %>);
 
       return {
-        <%= singular(lowercased(name)) %>,
+        <%= lowercased(singular(name)) %>,
       };
     };
 
-    if (metadata?.manager) {
-      return update(metadata.manager);
-    }
-
-    return this.manager.transaction('READ COMMITTED', update);
+    return metadata?.manager
+      ? transaction(metadata.manager)
+      : this.manager.transaction('READ COMMITTED', transaction);
   }
 
   async removeOne(
     id: string,
     metadata?: Pick<ServiceMetadata, 'manager'>,
-  ): Promise<Remove<%= singular(classify(name)) %>Output> {
-    const remove = async (manager: EntityManager) => {
-      const <%= singular(lowercased(name)) %>Repo = manager.getRepository(<%= singular(classify(name)) %>);
+  ): Promise<RemoveDomain1Output> {
+    const transaction = async (manager: EntityManager) => {
+      const <%= lowercased(singular(name)) %> = await this.findOneByOrFail({ id }, { manager });
 
-      const <%= singular(lowercased(name)) %> = await <%= singular(lowercased(name)) %>Repo.findOneBy({ id });
-      if (!<%= singular(lowercased(name)) %>) {
-        throw new DaoIdNotFoundError(<%= singular(classify(name)) %>, id);
-      }
-
-      await <%= singular(lowercased(name)) %>Repo.softRemove(<%= singular(lowercased(name)) %>);
+      await this.softRemove(<%= lowercased(singular(name)) %>, { manager });
 
       return {
-        <%= singular(lowercased(name)) %>,
+        <%= lowercased(singular(name)) %>,
       };
     };
 
-    if (metadata?.manager) {
-      return remove(metadata.manager);
-    }
-
-    return this.manager.transaction('READ COMMITTED', remove);
+    return metadata?.manager
+      ? transaction(metadata.manager)
+      : this.manager.transaction('READ COMMITTED', transaction);
   }
 }
