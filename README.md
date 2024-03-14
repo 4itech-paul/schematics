@@ -28,11 +28,9 @@ $ npm install -D 4itech-schematics
 
 Learn more in the [official documentation](https://docs.nestjs.com/).
 
-```typescript
-domain-1 | <%= singular(name) %>
-Domain1 | <%= classify(singular(name)) %>
-domain1 | <%= lowercased(singular(name)) %>
-```
+replace domain-1 to <%= singular(name) %>
+replace Domain1 to <%= classify(singular(name)) %>
+replace domain1 to <%= lowercased(singular(name)) %>
 
 ## Stay in touch
 
