@@ -29,9 +29,9 @@ $ npm install -D 4itech-schematics
 Learn more in the [official documentation](https://docs.nestjs.com/).
 
 ```typescript
-<%= singular(name) %>
-<%= classify(singular(name)) %>
-<%= lowercased(singular(name)) %>
+domain-1 | <%= singular(name) %>
+Domain1 | <%= classify(singular(name)) %>
+domain1 | <%= lowercased(singular(name)) %>
 ```
 
 ## Stay in touch
