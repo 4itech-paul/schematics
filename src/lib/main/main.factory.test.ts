@@ -134,38 +134,44 @@ export class Domain1PageArgs extends DaoNodePageArgs {
     it('should generate "create-domain-1.input" class', () => {
       expect(tree.readContent('/domain-1/input/create-domain-1.input.ts'))
         .toEqual(`import { ToCreateInputType } from '@app/graphql-type/to-create-input-type';
-import { InputType } from '@nestjs/graphql';
+import { InputType, OmitType } from '@nestjs/graphql';
 
 import { Domain1 } from '../domain-1.entity';
 
 @InputType()
-export class CreateDomain1Input extends ToCreateInputType(Domain1) {}
+export class CreateDomain1Input extends OmitType(
+  ToCreateInputType(Domain1),
+  [],
+) {}
 `);
     });
 
     it('should generate "domain-1-order.input" class', () => {
       expect(tree.readContent('/domain-1/input/domain-1-order.input.ts'))
         .toEqual(`import { ToOrderInputType } from '@app/graphql-type/to-order-input-type';
-import { InputType } from '@nestjs/graphql';
+import { InputType, OmitType } from '@nestjs/graphql';
 
 import { Domain1 } from '../domain-1.entity';
 
 @InputType()
-export class Domain1OrderInput extends ToOrderInputType(Domain1) {}
+export class Domain1OrderInput extends OmitType(
+  ToOrderInputType(Domain1),
+  [],
+) {}
 `);
     });
 
     it('should generate "domain-1-where.input" class', () => {
       expect(tree.readContent('/domain-1/input/domain-1-where.input.ts'))
         .toEqual(`import { ToWhereInputType } from '@app/graphql-type/to-where-input-type';
-import { InputType } from '@nestjs/graphql';
+import { InputType, OmitType } from '@nestjs/graphql';
 import { Nullable } from 'apps/main/src/common/base.service';
 import { FindOptionsWhere } from 'typeorm';
 
 import { Domain1 } from '../domain-1.entity';
 
 @InputType()
-export class Domain1WhereInput extends ToWhereInputType(Domain1) {
+export class Domain1WhereInput extends OmitType(ToWhereInputType(Domain1), []) {
   toFindOptionsWhere(): Nullable<FindOptionsWhere<Domain1>> | undefined {
     const { ...where } = this;
 
@@ -330,7 +336,7 @@ export class Domain1 extends CustomBaseEntity {
   @ColumnField({
     type: 'varchar',
     length: VarcharLength.Short,
-    comment: '#',
+    comment: '',
     nullable: true,
   })
   exampleField?: Maybe<string>;
@@ -352,8 +358,8 @@ import { Domain1Service } from './domain-1.service';
   providers: [
     Domain1Resolver,
     Domain1Service,
-    Domain1ByDomain1IdLoader,
-    WithDomain1Resolver,
+    // Domain1ByDomain1IdLoader,
+    // WithDomain1Resolver,
   ],
 })
 export class Domain1Module {}
@@ -435,13 +441,13 @@ import { EntityManager, Repository } from 'typeorm';
 import { ServiceMetadata } from '../common/service-metadata.interface';
 import { User } from '../user/user.entity';
 import { Domain1PageArgs } from './args/domain-1-page.args';
+import { Domain1 } from './domain-1.entity';
 import { CreateDomain1Input } from './input/create-domain-1.input';
 import { UpdateDomain1Input } from './input/update-domain-1.input';
 import { CreateDomain1Output } from './output/create-domain-1.output';
 import { RemoveDomain1Output } from './output/remove-domain-1.output';
 import { UpdateDomain1Output } from './output/update-domain-1.output';
 import { Domain1PageType } from './type/domain-1-page.type';
-import { Domain1 } from './domain-1.entity';
 
 @Injectable()
 export class Domain1Service extends BaseService<Domain1> {
@@ -458,27 +464,22 @@ export class Domain1Service extends BaseService<Domain1> {
     user: User,
     metadata?: Pick<ServiceMetadata, 'manager'>,
   ): Promise<CreateDomain1Output> {
-    const create = async (manager: EntityManager) => {
-      const domain1Repo = manager.getRepository(Domain1);
-
-      const domain1 = domain1Repo.create({
-        ...input,
-        createdBy: user.id,
-        updatedBy: user.id,
-      });
-
-      await domain1Repo.save(
-        domain1,
+    const transaction = async (manager: EntityManager) => {
+      const domain1 = await this.save(
+        {
+          ...input,
+          createdBy: user.id,
+          updatedBy: user.id,
+        },
+        { manager },
       );
 
       return { domain1 };
     };
 
-    if (metadata?.manager) {
-      return create(metadata.manager);
-    }
-
-    return this.manager.transaction('READ COMMITTED', create);
+    return metadata?.manager
+      ? transaction(metadata.manager)
+      : this.manager.transaction('READ COMMITTED', transaction);
   }
 
   async findByPageArgs(
@@ -509,7 +510,7 @@ export class Domain1Service extends BaseService<Domain1> {
     user: User,
     metadata?: Pick<ServiceMetadata, 'manager'>,
   ): Promise<UpdateDomain1Output> {
-    const update = async (manager: EntityManager) => {
+    const transaction = async (manager: EntityManager) => {
       const domain1Repo = manager.getRepository(Domain1);
 
       const domain1 = await domain1Repo.preload({
@@ -521,46 +522,35 @@ export class Domain1Service extends BaseService<Domain1> {
         throw new DaoIdNotFoundError(Domain1, id);
       }
 
-      await domain1Repo.save(
-        domain1,
-      );
+      await domain1Repo.save(domain1);
 
       return {
         domain1,
       };
     };
 
-    if (metadata?.manager) {
-      return update(metadata.manager);
-    }
-
-    return this.manager.transaction('READ COMMITTED', update);
+    return metadata?.manager
+      ? transaction(metadata.manager)
+      : this.manager.transaction('READ COMMITTED', transaction);
   }
 
   async removeOne(
     id: string,
     metadata?: Pick<ServiceMetadata, 'manager'>,
   ): Promise<RemoveDomain1Output> {
-    const remove = async (manager: EntityManager) => {
-      const domain1Repo = manager.getRepository(Domain1);
+    const transaction = async (manager: EntityManager) => {
+      const domain1 = await this.findOneByOrFail({ id }, { manager });
 
-      const domain1 = await domain1Repo.findOneBy({ id });
-      if (!domain1) {
-        throw new DaoIdNotFoundError(Domain1, id);
-      }
-
-      await domain1Repo.softRemove(domain1);
+      await this.softRemove(domain1, { manager });
 
       return {
         domain1,
       };
     };
 
-    if (metadata?.manager) {
-      return remove(metadata.manager);
-    }
-
-    return this.manager.transaction('READ COMMITTED', remove);
+    return metadata?.manager
+      ? transaction(metadata.manager)
+      : this.manager.transaction('READ COMMITTED', transaction);
   }
 }
 `);
