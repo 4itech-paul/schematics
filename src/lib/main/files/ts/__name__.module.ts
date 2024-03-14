@@ -10,8 +10,8 @@ import { <%= singular(classify(name)) %>Service } from './<%= singular(name) %>.
   providers: [
     <%= singular(classify(name)) %>Resolver,
     <%= singular(classify(name)) %>Service,
-    <%= singular(classify(name)) %>By<%= singular(classify(name)) %>IdLoader,
-    With<%= singular(classify(name)) %>Resolver,
+    // <%= singular(classify(name)) %>By<%= singular(classify(name)) %>IdLoader,
+    // With<%= singular(classify(name)) %>Resolver,
   ],
 })
 export class <%= singular(classify(name)) %>Module {}
