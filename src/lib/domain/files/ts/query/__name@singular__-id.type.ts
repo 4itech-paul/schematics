@@ -1,8 +1,7 @@
 import { Field, ID, InterfaceType } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
-import { } from <>;
-%= classify(singular(name)) %> } from '../<%= singular(name) %>.entity';
+import { <%= classify(singular(name)) %> } from '../<%= singular(name) %>.entity';
 
 @InterfaceType()
 export abstract class <%= classify(singular(name)) %>Id {
