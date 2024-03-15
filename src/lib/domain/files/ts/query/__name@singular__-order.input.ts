@@ -1,10 +1,10 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { Maybe } from 'graphql/jsutils/Maybe';
-import { NodeOrderEnum } from 'src/common/query/node-order.enum';
-import { NodeOrderInput } from 'src/common/query/node-order.input';
+import { InputType, OmitType } from '@nestjs/graphql';
+import { ToOrderInputType } from 'src/common/to-order-input-type';
+
+import { <%= classify(singular(name)) %> } from '../<%= singular(name) %>.entity';
 
 @InputType()
-export class <%= classify(singular(name)) %>OrderInput extends NodeOrderInput {
-  @Field(() => NodeOrderEnum, { nullable: true })
-  exampleField?: Maybe<NodeOrderEnum>;
-}
+export class <%= classify(singular(name)) %>OrderInput extends OmitType(
+  ToOrderInputType(<%= classify(singular(name)) %>),
+  [],
+) {}
