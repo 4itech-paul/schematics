@@ -55,6 +55,61 @@ describe('Domain Factory', () => {
     });
 
     it('should generate "Domain1" class', () => {
+      expect(tree.readContent('/domain-1/domain-1-id.loader.ts'))
+        .toEqual(`import { Injectable, Scope } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import DataLoader from 'dataloader';
+import { Maybe } from 'graphql/jsutils/Maybe';
+import { In, Repository } from 'typeorm';
+
+import { Domain1 } from './domain-1.entity';
+
+@Injectable({ scope: Scope.REQUEST })
+export class Domain1IdLoader extends DataLoader<string, Maybe<Domain1>> {
+  constructor(
+    @InjectRepository(Domain1)
+    private readonly repo: Repository<Domain1>,
+  ) {
+    super(async (keys: readonly string[]): Promise<Maybe<Domain1>[]> => {
+      const daoArray = await this.repo.find({
+        where: {
+          id: In(keys),
+        },
+      });
+      const daoMap = new Map(daoArray.map((dao) => [dao.id, dao]));
+      return keys.map((key) => daoMap.get(key));
+    });
+  }
+}
+`);
+    });
+
+    it('should generate "Domain1" class', () => {
+      expect(tree.readContent('/domain-1/domain-1-id.resolver.ts'))
+        .toEqual(`import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
+import { Maybe } from 'graphql/jsutils/Maybe';
+
+import { Domain1IdLoader } from './domain-1-id.loader';
+import { Domain1 } from './domain-1.entity';
+import { Domain1Id } from './query/domain-1-id.type';
+
+@Resolver(() => Domain1Id)
+export class Domain1IdResolver {
+  constructor(private readonly loader: Domain1IdLoader) {}
+
+  @ResolveField(() => Domain1, { nullable: true })
+  async domain1(
+    @Parent() { domain1Id, domain1 }: Domain1Id,
+  ): Promise<Maybe<Domain1>> {
+    if (domain1) return domain1;
+    if (domain1Id) return this.loader.load(domain1Id);
+    return null;
+  }
+}
+`);
+    });
+
+    it('should generate "Domain1" class', () => {
       expect(tree.readContent('/domain-1/domain-1.entity.ts'))
         .toEqual(`import { ObjectType } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
@@ -324,6 +379,24 @@ import { Domain1 } from '../domain-1.entity';
 export class UpdateDomain1Output {
   @Field(() => Domain1)
   domain1!: Domain1;
+}
+`);
+    });
+
+    it('should generate "Domain1OrderInput" class', () => {
+      expect(tree.readContent('/domain-1/query/domain-1-id.type.ts'))
+        .toEqual(`import { Field, ID, InterfaceType } from '@nestjs/graphql';
+import { Maybe } from 'graphql/jsutils/Maybe';
+
+import { Domain1 } from '../domain-1.entity';
+
+@InterfaceType()
+export abstract class Domain1Id {
+  @Field(() => ID, { nullable: true })
+  domain1Id?: Maybe<string>;
+
+  @Field(() => Domain1, { nullable: true })
+  domain1?: Maybe<Domain1>;
 }
 `);
     });
