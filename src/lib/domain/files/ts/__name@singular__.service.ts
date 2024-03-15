@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/common/base.service';
-import { IServiceMetadata } from 'src/common/interface/service-metadata.interface';
-import { NodeIdNotFoundError } from 'src/common/node-id-not-found.error';
+import { ServiceOptions } from 'src/common/service-options.interface';
 import { EntityManager, Repository } from 'typeorm';
 
 import { <%= classify(singular(name)) %> } from './<%= singular(name) %>.entity';
@@ -15,81 +14,60 @@ export class <%= classify(singular(name)) %>Service extends BaseService<<%= clas
   constructor(
     private readonly manager: EntityManager,
     @InjectRepository(<%= classify(singular(name)) %>)
-    readonly <%= lowercased(singular(name)) %>Repo: Repository<<%= classify(singular(name)) %>>,
+    readonly repo: Repository<<%= classify(singular(name)) %>>,
   ) {
-    super(<%= lowercased(singular(name)) %>Repo);
+    super(repo);
   }
 
   async createOne(
     input: Create<%= classify(singular(name)) %>Input | <%= classify(singular(name)) %>,
-    metadata?: IServiceMetadata,
+    options: ServiceOptions,
   ): Promise<<%= classify(singular(name)) %>> {
-    const create = async (manager: EntityManager) => {
-      const dao = input instanceof <%= classify(singular(name)) %> ? input : this.create(input);
-      if (metadata?.user) {
-        dao.createUserId = metadata.user.id;
-        dao.updateUserId = metadata.user.id;
-      }
-      return this.save(dao, { manager });
+    const transaction = async (manager: EntityManager) => {
+      return this.save(input, { manager, user: options.user });
     };
 
-    if (metadata?.manager) {
-      return create(metadata.manager);
-    }
-
-    return this.manager.transaction('READ COMMITTED', create);
+    return options.manager
+      ? transaction(options.manager)
+      : this.manager.transaction('READ COMMITTED', transaction);
   }
 
-  findPage(args: <%= classify(singular(name)) %>PageArgs, metadata?: IServiceMetadata) {
-    return this.findNodePage(args, metadata);
+  findPage(args: <%= classify(singular(name)) %>PageArgs, options?: ServiceOptions) {
+    return this.findNodePage(args, options);
   }
 
-  async updateOne(
-    input: Update<%= classify(singular(name)) %>Input,
-    metadata: IServiceMetadata,
-  ): Promise<<%= classify(singular(name)) %>> {
-    const update = async (manager: EntityManager) => {
-      const <%= lowercased(singular(name)) %>Repo = manager.getRepository(<%= classify(singular(name)) %>);
-      const exist<%= classify(singular(name)) %> = await <%= lowercased(singular(name)) %>Repo.findOne({
-        where: { id: input.id },
-      });
-      if (!exist<%= classify(singular(name)) %>) {
-        throw new NodeIdNotFoundError(<%= classify(singular(name)) %>, input.id);
-      }
+  async updateOne(input: Update<%= classify(singular(name)) %>Input, options: ServiceOptions) {
+    const transaction = async (manager: EntityManager) => {
+      const exist<%= classify(singular(name)) %> = await this.findOneOrFail(
+        {
+          where: { id: input.id },
+        },
+        { manager },
+      );
 
       return this.save(
         {
           ...exist<%= classify(singular(name)) %>,
           ...input,
-          updateUserId: metadata?.user?.id,
         },
-        { manager },
+        { manager, user: options.user },
       );
     };
 
-    if (metadata?.manager) {
-      return update(metadata.manager);
-    }
-
-    return this.manager.transaction('READ COMMITTED', update);
+    return options.manager
+      ? transaction(options.manager)
+      : this.manager.transaction('READ COMMITTED', transaction);
   }
 
-  async removeOne(id: string, metadata: IServiceMetadata): Promise<<%= classify(singular(name)) %>> {
-    const remove = async (manager: EntityManager) => {
-      const <%= lowercased(singular(name)) %>Repo = manager.getRepository(<%= classify(singular(name)) %>);
+  async removeOne(id: string, options: ServiceOptions) {
+    const transaction = async (manager: EntityManager) => {
+      const <%= lowercased(singular(name)) %> = await this.findOneByOrFail({ id });
 
-      const <%= lowercased(singular(name)) %> = await <%= lowercased(singular(name)) %>Repo.findOneBy({ id });
-      if (!<%= lowercased(singular(name)) %>) {
-        throw new NodeIdNotFoundError(<%= classify(singular(name)) %>, id);
-      }
-
-      return <%= lowercased(singular(name)) %>Repo.softRemove(<%= lowercased(singular(name)) %>);
+      return this.softRemove(<%= lowercased(singular(name)) %>, { manager, user: options?.user });
     };
 
-    if (metadata?.manager) {
-      return remove(metadata.manager);
-    }
-
-    return this.manager.transaction('READ COMMITTED', remove);
+    return options.manager
+      ? transaction(options.manager)
+      : this.manager.transaction('READ COMMITTED', transaction);
   }
 }

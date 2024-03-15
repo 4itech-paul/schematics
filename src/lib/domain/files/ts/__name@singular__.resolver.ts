@@ -1,6 +1,6 @@
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
-import { UserDecorator } from 'src/common/security/user.decorator';
+import { UserDecorator } from 'src/common/user.decorator';
 import { User } from 'src/user/user.entity';
 
 import { <%= classify(singular(name)) %> } from './<%= singular(name) %>.entity';
@@ -23,19 +23,19 @@ export class <%= classify(singular(name)) %>Resolver {
     @Args('input') input: Create<%= classify(singular(name)) %>Input,
     @UserDecorator() user: User,
   ): Promise<Create<%= classify(singular(name)) %>Output> {
-    const <%= lowercased(singular(name)) %> = await this.<%= lowercased(singular(name)) %>Service.createOne(input, { user });
+    const <%= lowercased(singular(name)) %> = await this.<%= lowercased(singular(name)) %>Service.createOne(input, {
+      user,
+    });
     return { <%= lowercased(singular(name)) %> };
   }
 
   @Query(() => <%= classify(singular(name)) %>Page)
-  async <%= lowercased(singular(name)) %>Page(@Args() args: <%= classify(singular(name)) %>PageArgs): Promise<<%= classify(singular(name)) %>Page> {
+  <%= lowercased(singular(name)) %>Page(@Args() args: <%= classify(singular(name)) %>PageArgs): Promise<<%= classify(singular(name)) %>Page> {
     return this.<%= lowercased(singular(name)) %>Service.findPage(args);
   }
 
   @Query(() => <%= classify(singular(name)) %>)
-  async <%= lowercased(singular(name)) %>(
-    @Args('id', { type: () => ID }) id: string,
-  ): Promise<Maybe<<%= classify(singular(name)) %>>> {
+  <%= lowercased(singular(name)) %>(@Args('id', { type: () => ID }) id: string): Promise<Maybe<<%= classify(singular(name)) %>>> {
     return this.<%= lowercased(singular(name)) %>Service.findOne({ where: { id } });
   }
 
@@ -44,7 +44,9 @@ export class <%= classify(singular(name)) %>Resolver {
     @Args('input') input: Update<%= classify(singular(name)) %>Input,
     @UserDecorator() user: User,
   ): Promise<Update<%= classify(singular(name)) %>Output> {
-    const <%= lowercased(singular(name)) %> = await this.<%= lowercased(singular(name)) %>Service.updateOne(input, { user });
+    const <%= lowercased(singular(name)) %> = await this.<%= lowercased(singular(name)) %>Service.updateOne(input, {
+      user,
+    });
     return { <%= lowercased(singular(name)) %> };
   }
 
@@ -53,7 +55,9 @@ export class <%= classify(singular(name)) %>Resolver {
     @Args('input') input: Remove<%= classify(singular(name)) %>Input,
     @UserDecorator() user: User,
   ): Promise<Remove<%= classify(singular(name)) %>Output> {
-    const <%= lowercased(singular(name)) %> = await this.<%= lowercased(singular(name)) %>Service.removeOne(input.id, { user });
+    const <%= lowercased(singular(name)) %> = await this.<%= lowercased(singular(name)) %>Service.removeOne(input.id, {
+      user,
+    });
     return { <%= lowercased(singular(name)) %> };
   }
 }

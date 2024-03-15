@@ -1,10 +1,10 @@
-import { InputType } from '@nestjs/graphql';
-import { OmitMetaEntityType } from 'src/common/omit-meta-entity-type';
+import { InputType, OmitType } from '@nestjs/graphql';
+import { ToCreateInputType } from 'src/common/to-create-input-type';
 
 import { <%= classify(singular(name)) %> } from '../<%= singular(name) %>.entity';
 
 @InputType()
-export class Create<%= classify(singular(name)) %>Input extends OmitMetaEntityType(
-  <%= classify(singular(name)) %>,
-  [] as const,
+export class Create<%= classify(singular(name)) %>Input extends OmitType(
+  ToCreateInputType(<%= classify(singular(name)) %>),
+  [],
 ) {}
