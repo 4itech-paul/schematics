@@ -445,7 +445,7 @@ export class Domain1PageArgs extends NodePageArgs {
     it('should generate "Domain1Page" class', () => {
       expect(tree.readContent('/domain-1/query/domain-1-page.type.ts'))
         .toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
-import { NodePage } from 'src/common/query/node-page.type';
+import { NodePage } from 'src/common/node-page.type';
 
 import { Domain1 } from '../domain-1.entity';
 
