@@ -1,4 +1,3 @@
-// user-loader.service.ts
 import { Injectable, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import DataLoader from 'dataloader';

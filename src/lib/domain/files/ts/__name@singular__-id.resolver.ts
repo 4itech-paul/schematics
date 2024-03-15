@@ -1,12 +1,9 @@
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
-import { } from <>;
-import { } from <>;
-import { } from <>;
-%= classify(singular(name)) %>IdLoader } from './<%= singular(name) %>-id.loader';
-%= classify(singular(name)) %> } from './<%= singular(name) %>.entity';
-%= classify(singular(name)) %>Id } from './query/<%= singular(name) %>-id.type';
+import { <%= classify(singular(name)) %>IdLoader } from './<%= singular(name) %>-id.loader';
+import { <%= classify(singular(name)) %> } from './<%= singular(name) %>.entity';
+import { <%= classify(singular(name)) %>Id } from './query/<%= singular(name) %>-id.type';
 
 @Resolver(() => <%= classify(singular(name)) %>Id)
 export class <%= classify(singular(name)) %>IdResolver {
