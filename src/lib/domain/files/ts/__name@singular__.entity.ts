@@ -5,7 +5,7 @@ import { MetaEntity } from 'src/common/meta.entity';
 import { Entity } from 'typeorm';
 
 @Entity()
-@ObjectType({ implements: MetaEntity })
+@ObjectType({ implements: [MetaEntity] })
 export class <%= classify(singular(name)) %> extends MetaEntity {
   @ColumnField({ type: 'int', nullable: true, comment: '<%= lowercased(singular(name)) %>001' })
   <%= lowercased(singular(name)) %>001?: Maybe<number>;

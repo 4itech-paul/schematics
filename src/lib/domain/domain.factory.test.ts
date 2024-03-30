@@ -118,7 +118,7 @@ import { MetaEntity } from 'src/common/meta.entity';
 import { Entity } from 'typeorm';
 
 @Entity()
-@ObjectType({ implements: MetaEntity })
+@ObjectType({ implements: [MetaEntity] })
 export class Domain1 extends MetaEntity {
   @ColumnField({ type: 'int', nullable: true, comment: 'domain1001' })
   domain1001?: Maybe<number>;
@@ -357,12 +357,15 @@ export class RemoveDomain1Output {
 
     it('should generate "UpdateDomain1Input" class', () => {
       expect(tree.readContent('/domain-1/mutation/update-domain-1.input.ts'))
-        .toEqual(`import { Field, ID, InputType, PartialType } from '@nestjs/graphql';
+        .toEqual(`import { Field, ID, InputType, OmitType, PartialType } from '@nestjs/graphql';
 
 import { CreateDomain1Input } from './create-domain-1.input';
 
 @InputType()
-export class UpdateDomain1Input extends PartialType(CreateDomain1Input) {
+export class UpdateDomain1Input extends OmitType(
+  PartialType(CreateDomain1Input),
+  [],
+) {
   @Field(() => ID)
   id!: string;
 }
@@ -419,6 +422,7 @@ export class Domain1OrderInput extends OmitType(
     it('should generate "Domain1PageArgs" class', () => {
       expect(tree.readContent('/domain-1/query/domain-1-page.args.ts'))
         .toEqual(`import { ArgsType } from '@nestjs/graphql';
+import { Maybe } from 'graphql/jsutils/Maybe';
 import { NodePageArgs } from 'src/common/node.page.args';
 import { TypeField } from 'src/common/type-field.decorator';
 
@@ -433,11 +437,11 @@ export class Domain1PageArgs extends NodePageArgs {
   })
   order: Domain1OrderInput = new Domain1OrderInput();
 
-  @TypeField(() => Domain1WhereInput, {
+  @TypeField(() => [Domain1WhereInput], {
     description: '查詢條件',
-    defaultValue: new Domain1WhereInput(),
+    nullable: true,
   })
-  where: Domain1WhereInput = new Domain1WhereInput();
+  where?: Maybe<Domain1WhereInput[]>;
 }
 `);
     });

@@ -1,4 +1,5 @@
 import { ArgsType } from '@nestjs/graphql';
+import { Maybe } from 'graphql/jsutils/Maybe';
 import { NodePageArgs } from 'src/common/node.page.args';
 import { TypeField } from 'src/common/type-field.decorator';
 
@@ -13,9 +14,9 @@ export class <%= classify(singular(name)) %>PageArgs extends NodePageArgs {
   })
   order: <%= classify(singular(name)) %>OrderInput = new <%= classify(singular(name)) %>OrderInput();
 
-  @TypeField(() => <%= classify(singular(name)) %>WhereInput, {
+  @TypeField(() => [<%= classify(singular(name)) %>WhereInput], {
     description: '查詢條件',
-    defaultValue: new <%= classify(singular(name)) %>WhereInput(),
+    nullable: true,
   })
-  where: <%= classify(singular(name)) %>WhereInput = new <%= classify(singular(name)) %>WhereInput();
+  where?: Maybe<<%= classify(singular(name)) %>WhereInput[]>;
 }
