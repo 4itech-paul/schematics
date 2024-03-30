@@ -28,9 +28,23 @@ $ npm install -D 4itech-schematics
 
 Learn more in the [official documentation](https://docs.nestjs.com/).
 
-replace domain-1 to <%= singular(name) %>
-replace Domain1 to <%= classify(singular(name)) %>
-replace domain1 to <%= lowercased(singular(name)) %>
+comment out settings.json
+
+```json
+"editor.formatOnSave": true,
+"editor.codeActionsOnSave": {
+  "source.fixAll": "explicit",
+  "source.fixAll.eslint": "explicit",
+  "source.organizeImports": "explicit",
+  "source.sortMembers": "explicit"
+},
+```
+
+Search (with Match Case & include files)
+
+- replace domain-1 to <%= singular(name) %>
+- replace Domain1 to <%= classify(singular(name)) %>
+- replace domain1 to <%= lowercased(singular(name)) %>
 
 ## Stay in touch
 
