@@ -18,3 +18,4 @@ src/utils/**/*.js
 src/utils/**/*.d.ts
 
 .DS_Store
+.env
