@@ -42,9 +42,9 @@ comment out settings.json
 
 Search (with Match Case & include files)
 
-- replace domain-1 to <%= singular(name) %>
-- replace Domain1 to <%= classify(singular(name)) %>
-- replace domain1 to <%= lowercased(singular(name)) %>
+- replace domain-0001 to <%= singular(name) %>
+- replace Domain0001 to <%= classify(singular(name)) %>
+- replace domain0001 to <%= lowercased(singular(name)) %>
 
 ## Stay in touch
 
