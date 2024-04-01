@@ -23,7 +23,7 @@ export class <%= classify(singular(name)) %>Resolver {
     @Args('input') input: Create<%= classify(singular(name)) %>Input,
     @UserDecorator() user: User,
   ): Promise<Create<%= classify(singular(name)) %>Output> {
-    const <%= lowercased(singular(name)) %> = await this.<%= lowercased(singular(name)) %>Service.createOne(input, {
+    const <%= lowercased(singular(name)) %> = await this.<%= lowercased(singular(name)) %>Service.saveOne(input, {
       user,
     });
     return { <%= lowercased(singular(name)) %> };
@@ -44,7 +44,7 @@ export class <%= classify(singular(name)) %>Resolver {
     @Args('input') input: Update<%= classify(singular(name)) %>Input,
     @UserDecorator() user: User,
   ): Promise<Update<%= classify(singular(name)) %>Output> {
-    const <%= lowercased(singular(name)) %> = await this.<%= lowercased(singular(name)) %>Service.updateOne(input, {
+    const <%= lowercased(singular(name)) %> = await this.<%= lowercased(singular(name)) %>Service.saveOne(input, {
       user,
     });
     return { <%= lowercased(singular(name)) %> };
