@@ -12,19 +12,21 @@ import { <%= classify(singular(name)) %>PageArgs } from './query/<%= singular(na
 @Injectable()
 export class <%= classify(singular(name)) %>Service extends BaseService<<%= classify(singular(name)) %>> {
   constructor(
-    private readonly manager: EntityManager,
     @InjectRepository(<%= classify(singular(name)) %>)
     readonly repo: Repository<<%= classify(singular(name)) %>>,
+    private readonly manager: EntityManager,
   ) {
     super(repo);
   }
 
-  async createOne(
-    input: Create<%= classify(singular(name)) %>Input | <%= classify(singular(name)) %>,
+  async saveOne(
+    input: Create<%= classify(singular(name)) %>Input | Update<%= classify(singular(name)) %>Input,
     options: ServiceOptions,
   ): Promise<<%= classify(singular(name)) %>> {
     const transaction = async (manager: EntityManager) => {
-      return this.save(input, { manager, user: options.user });
+      const <%= lowercased(singular(name)) %> = await this.save(input, { manager, user: options.user });
+
+      return <%= lowercased(singular(name)) %>;
     };
 
     return options.manager
@@ -34,29 +36,6 @@ export class <%= classify(singular(name)) %>Service extends BaseService<<%= clas
 
   findPage(args: <%= classify(singular(name)) %>PageArgs, options?: ServiceOptions) {
     return this.findNodePage(args, options);
-  }
-
-  async updateOne(input: Update<%= classify(singular(name)) %>Input, options: ServiceOptions) {
-    const transaction = async (manager: EntityManager) => {
-      const exist<%= classify(singular(name)) %> = await this.findOneOrFail(
-        {
-          where: { id: input.id },
-        },
-        { manager },
-      );
-
-      return this.save(
-        {
-          ...exist<%= classify(singular(name)) %>,
-          ...input,
-        },
-        { manager, user: options.user },
-      );
-    };
-
-    return options.manager
-      ? transaction(options.manager)
-      : this.manager.transaction('READ COMMITTED', transaction);
   }
 
   async removeOne(id: string, options: ServiceOptions) {
