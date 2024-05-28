@@ -21,10 +21,11 @@ describe('Domain Factory', () => {
       const tree = await runner.runSchematic('domain', options);
       const files = tree.files;
       expect(files).toEqual([
-        '/domain-0001/domain-0001-id.loader.ts',
-        '/domain-0001/domain-0001-id.resolver.ts',
+        '/domain-0001/domain-0001-by-id.loader.ts',
+        '/domain-0001/domain-0001-by-id.resolver.ts',
         '/domain-0001/domain-0001.entity.ts',
         '/domain-0001/domain-0001.module.ts',
+        '/domain-0001/domain-0001.repository.ts',
         '/domain-0001/domain-0001.resolver.ts',
         '/domain-0001/domain-0001.service.ts',
         '/domain-0001/domain-0001.resolver.spec.ts',
@@ -35,7 +36,7 @@ describe('Domain Factory', () => {
         '/domain-0001/mutation/remove-domain-0001.output.ts',
         '/domain-0001/mutation/update-domain-0001.input.ts',
         '/domain-0001/mutation/update-domain-0001.output.ts',
-        '/domain-0001/query/domain-0001-id.type.ts',
+        '/domain-0001/query/domain-0001-by-id.type.ts',
         '/domain-0001/query/domain-0001-order.input.ts',
         '/domain-0001/query/domain-0001-page.args.ts',
         '/domain-0001/query/domain-0001-page.type.ts',
@@ -56,8 +57,8 @@ describe('Domain Factory', () => {
       tree = await runner.runSchematic('domain', options);
     });
 
-    it('should generate "Domain0001IdLoader" class', () => {
-      expect(tree.readContent('/domain-0001/domain-0001-id.loader.ts'))
+    it('should generate "Domain0001ByIdLoader" class', () => {
+      expect(tree.readContent('/domain-0001/domain-0001-by-id.loader.ts'))
         .toEqual(`import { Injectable, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import DataLoader from 'dataloader';
@@ -67,7 +68,10 @@ import { In, Repository } from 'typeorm';
 import { Domain0001 } from './domain-0001.entity';
 
 @Injectable({ scope: Scope.REQUEST })
-export class Domain0001IdLoader extends DataLoader<string, Maybe<Domain0001>> {
+export class Domain0001ByIdLoader extends DataLoader<
+  string,
+  Maybe<Domain0001>
+> {
   constructor(
     @InjectRepository(Domain0001)
     private readonly repo: Repository<Domain0001>,
@@ -86,22 +90,22 @@ export class Domain0001IdLoader extends DataLoader<string, Maybe<Domain0001>> {
 `);
     });
 
-    it('should generate "Domain0001IdResolver" class', () => {
-      expect(tree.readContent('/domain-0001/domain-0001-id.resolver.ts'))
+    it('should generate "Domain0001ByIdResolver" class', () => {
+      expect(tree.readContent('/domain-0001/domain-0001-by-id.resolver.ts'))
         .toEqual(`import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
-import { Domain0001IdLoader } from './domain-0001-id.loader';
+import { Domain0001ByIdLoader } from './domain-0001-by-id.loader';
 import { Domain0001 } from './domain-0001.entity';
-import { Domain0001Id } from './query/domain-0001-id.type';
+import { Domain0001ById } from './query/domain-0001-by-id.type';
 
-@Resolver(() => Domain0001Id)
-export class Domain0001IdResolver {
-  constructor(private readonly loader: Domain0001IdLoader) {}
+@Resolver(() => Domain0001ById)
+export class Domain0001ByIdResolver {
+  constructor(private readonly loader: Domain0001ByIdLoader) {}
 
   @ResolveField(() => Domain0001, { nullable: true })
   async domain0001(
-    @Parent() { domain0001Id, domain0001 }: Domain0001Id,
+    @Parent() { domain0001Id, domain0001 }: Domain0001ById,
   ): Promise<Maybe<Domain0001>> {
     if (domain0001) return domain0001;
     if (domain0001Id) return this.loader.load(domain0001Id);
@@ -115,9 +119,10 @@ export class Domain0001IdResolver {
       expect(tree.readContent('/domain-0001/domain-0001.entity.ts'))
         .toEqual(`import { ObjectType } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
-import { ColumnField } from 'src/common/column-field.decorator';
-import { MetaEntity } from 'src/common/meta.entity';
 import { Entity } from 'typeorm';
+
+import { ColumnField } from '../common/column-field.decorator';
+import { MetaEntity } from '../common/meta.entity';
 
 @Entity()
 @ObjectType({ implements: [MetaEntity] })
@@ -134,19 +139,42 @@ export class Domain0001 extends MetaEntity {
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { Domain0001 } from './domain-0001.entity';
+import { Domain0001Repository } from './domain-0001.repository';
 import { Domain0001Resolver } from './domain-0001.resolver';
 import { Domain0001Service } from './domain-0001.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Domain0001])],
   providers: [
-    Domain0001Resolver,
+    Domain0001Repository,
     Domain0001Service,
-    // Domain0001IdLoader,
-    // Domain0001IdResolver,
+    Domain0001Resolver,
+    // Domain0001ByIdLoader,
+    // Domain0001ByIdResolver,
   ],
 })
 export class Domain0001Module {}
+`);
+    });
+
+    it('should generate "Domain0001Repository" class', () => {
+      expect(tree.readContent('/domain-0001/domain-0001.repository.ts'))
+        .toEqual(`import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { BaseRepository } from '../common/base.repository';
+import { Domain0001 } from './domain-0001.entity';
+
+@Injectable()
+export class Domain0001Repository extends BaseRepository<Domain0001> {
+  constructor(
+    @InjectRepository(Domain0001)
+    readonly repo: Repository<Domain0001>,
+  ) {
+    super(repo);
+  }
+}
 `);
     });
 
@@ -154,10 +182,10 @@ export class Domain0001Module {}
       expect(tree.readContent('/domain-0001/domain-0001.resolver.ts'))
         .toEqual(`import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
-import { UserDecorator } from 'src/common/user.decorator';
-import { User } from 'src/user/user.entity';
+import { Transactional } from 'typeorm-transactional';
 
 import { Domain0001 } from './domain-0001.entity';
+import { Domain0001Repository } from './domain-0001.repository';
 import { Domain0001Service } from './domain-0001.service';
 import { CreateDomain0001Input } from './mutation/create-domain-0001.input';
 import { CreateDomain0001Output } from './mutation/create-domain-0001.output';
@@ -170,48 +198,49 @@ import { Domain0001Page } from './query/domain-0001-page.type';
 
 @Resolver(() => Domain0001)
 export class Domain0001Resolver {
-  constructor(private readonly domain0001Service: Domain0001Service) {}
+  constructor(
+    private readonly domain0001Repository: Domain0001Repository,
+    private readonly domain0001Service: Domain0001Service,
+  ) {}
 
+  @Transactional()
   @Mutation(() => CreateDomain0001Output)
   async createDomain0001(
     @Args('input') input: CreateDomain0001Input,
-    @UserDecorator() user: User,
   ): Promise<CreateDomain0001Output> {
-    const domain0001 = await this.domain0001Service.saveOne(input, {
-      user,
-    });
+    const domain0001 = await this.domain0001Service.saveOne(input);
     return { domain0001 };
   }
 
+  @Transactional()
   @Query(() => Domain0001Page)
   domain0001Page(@Args() args: Domain0001PageArgs): Promise<Domain0001Page> {
     return this.domain0001Service.findPage(args);
   }
 
+  @Transactional()
   @Query(() => Domain0001)
-  domain0001(@Args('id', { type: () => ID }) id: string): Promise<Maybe<Domain0001>> {
-    return this.domain0001Service.findOne({ where: { id } });
+  domain0001(
+    @Args('id', { type: () => ID }) id: string,
+  ): Promise<Maybe<Domain0001>> {
+    return this.domain0001Repository.findOne({ where: { id } });
   }
 
+  @Transactional()
   @Mutation(() => UpdateDomain0001Output)
   async updateDomain0001(
     @Args('input') input: UpdateDomain0001Input,
-    @UserDecorator() user: User,
   ): Promise<UpdateDomain0001Output> {
-    const domain0001 = await this.domain0001Service.saveOne(input, {
-      user,
-    });
+    const domain0001 = await this.domain0001Service.saveOne(input);
     return { domain0001 };
   }
 
+  @Transactional()
   @Mutation(() => RemoveDomain0001Output)
   async removeDomain0001(
     @Args('input') input: RemoveDomain0001Input,
-    @UserDecorator() user: User,
   ): Promise<RemoveDomain0001Output> {
-    const domain0001 = await this.domain0001Service.removeOne(input.id, {
-      user,
-    });
+    const domain0001 = await this.domain0001Service.removeOne(input.id);
     return { domain0001 };
   }
 }
@@ -221,55 +250,37 @@ export class Domain0001Resolver {
     it('should generate "Domain0001Service" class', () => {
       expect(tree.readContent('/domain-0001/domain-0001.service.ts'))
         .toEqual(`import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { BaseService } from 'src/common/base.service';
-import { ServiceOptions } from 'src/common/service-options.interface';
-import { EntityManager, Repository } from 'typeorm';
+import { Transactional } from 'typeorm-transactional';
 
 import { Domain0001 } from './domain-0001.entity';
+import { Domain0001Repository } from './domain-0001.repository';
 import { CreateDomain0001Input } from './mutation/create-domain-0001.input';
 import { UpdateDomain0001Input } from './mutation/update-domain-0001.input';
 import { Domain0001PageArgs } from './query/domain-0001-page.args';
 
 @Injectable()
-export class Domain0001Service extends BaseService<Domain0001> {
-  constructor(
-    @InjectRepository(Domain0001)
-    readonly repo: Repository<Domain0001>,
-    private readonly manager: EntityManager,
-  ) {
-    super(repo);
-  }
+export class Domain0001Service {
+  constructor(private readonly repo: Domain0001Repository) {}
 
+  @Transactional()
   async saveOne(
     input: CreateDomain0001Input | UpdateDomain0001Input,
-    options: ServiceOptions,
   ): Promise<Domain0001> {
-    const transaction = async (manager: EntityManager) => {
-      const domain0001 = await this.save(input, { manager, user: options.user });
+    const domain0001 = await this.repo.save(input);
 
-      return domain0001;
-    };
-
-    return options.manager
-      ? transaction(options.manager)
-      : this.manager.transaction('READ COMMITTED', transaction);
+    return domain0001;
   }
 
-  findPage(args: Domain0001PageArgs, options?: ServiceOptions) {
-    return this.findNodePage(args, options);
+  @Transactional()
+  findPage(args: Domain0001PageArgs) {
+    return this.repo.findNodePage(args);
   }
 
-  async removeOne(id: string, options: ServiceOptions) {
-    const transaction = async (manager: EntityManager) => {
-      const domain0001 = await this.findOneByOrFail({ id });
+  @Transactional()
+  async removeOne(id: string) {
+    const domain0001 = await this.repo.findOneByOrFail({ id });
 
-      return this.softRemove(domain0001, { manager, user: options?.user });
-    };
-
-    return options.manager
-      ? transaction(options.manager)
-      : this.manager.transaction('READ COMMITTED', transaction);
+    return this.repo.softRemove(domain0001);
   }
 }
 `);
@@ -280,8 +291,8 @@ export class Domain0001Service extends BaseService<Domain0001> {
         tree.readContent('/domain-0001/mutation/create-domain-0001.input.ts'),
       ).toEqual(
         `import { InputType, OmitType } from '@nestjs/graphql';
-import { ToCreateInputType } from 'src/common/to-create-input-type';
 
+import { ToCreateInputType } from '../../common/to-create-input-type';
 import { Domain0001 } from '../domain-0001.entity';
 
 @InputType()
@@ -372,15 +383,15 @@ export class UpdateDomain0001Output {
 `);
     });
 
-    it('should generate "Domain0001OrderInput" class', () => {
-      expect(tree.readContent('/domain-0001/query/domain-0001-id.type.ts'))
+    it('should generate "Domain0001ById" class', () => {
+      expect(tree.readContent('/domain-0001/query/domain-0001-by-id.type.ts'))
         .toEqual(`import { Field, ID, InterfaceType } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
 import { Domain0001 } from '../domain-0001.entity';
 
 @InterfaceType()
-export abstract class Domain0001Id {
+export abstract class Domain0001ById {
   @Field(() => ID, { nullable: true })
   domain0001Id?: Maybe<string>;
 
@@ -393,8 +404,8 @@ export abstract class Domain0001Id {
     it('should generate "Domain0001OrderInput" class', () => {
       expect(tree.readContent('/domain-0001/query/domain-0001-order.input.ts'))
         .toEqual(`import { InputType, OmitType } from '@nestjs/graphql';
-import { ToOrderInputType } from 'src/common/to-order-input-type';
 
+import { ToOrderInputType } from '../../common/to-order-input-type';
 import { Domain0001 } from '../domain-0001.entity';
 
 @InputType()
@@ -409,9 +420,9 @@ export class Domain0001OrderInput extends OmitType(
       expect(tree.readContent('/domain-0001/query/domain-0001-page.args.ts'))
         .toEqual(`import { ArgsType } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
-import { NodePageArgs } from 'src/common/node.page.args';
-import { TypeField } from 'src/common/type-field.decorator';
 
+import { NodePageArgs } from '../../common/node.page.args';
+import { TypeField } from '../../common/type-field.decorator';
 import { Domain0001OrderInput } from './domain-0001-order.input';
 import { Domain0001WhereInput } from './domain-0001-where.input';
 
@@ -435,8 +446,8 @@ export class Domain0001PageArgs extends NodePageArgs {
     it('should generate "Domain0001Page" class', () => {
       expect(tree.readContent('/domain-0001/query/domain-0001-page.type.ts'))
         .toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
-import { NodePage } from 'src/common/node-page.type';
 
+import { NodePage } from '../../common/node-page.type';
 import { Domain0001 } from '../domain-0001.entity';
 
 @ObjectType({
@@ -452,15 +463,18 @@ export class Domain0001Page implements NodePage<Domain0001> {
     it('should generate "Domain0001WhereInput" class', () => {
       expect(tree.readContent('/domain-0001/query/domain-0001-where.input.ts'))
         .toEqual(`import { InputType, OmitType } from '@nestjs/graphql';
-import { Nullable } from 'src/common/nullable.interface';
-import { ToWhereInputType } from 'src/common/to-where-input-type';
 import { FindOptionsWhere } from 'typeorm';
 
+import { DeepNullable } from '../../common/nullable.interface';
+import { ToWhereInputType } from '../../common/to-where-input-type';
 import { Domain0001 } from '../domain-0001.entity';
 
 @InputType()
-export class Domain0001WhereInput extends OmitType(ToWhereInputType(Domain0001), []) {
-  toFindOptionsWhere(): Nullable<FindOptionsWhere<Domain0001>> | undefined {
+export class Domain0001WhereInput extends OmitType(
+  ToWhereInputType(Domain0001),
+  [],
+) {
+  toFindOptionsWhere(): DeepNullable<FindOptionsWhere<Domain0001>> {
     const { ...where } = this;
     return { ...where };
   }

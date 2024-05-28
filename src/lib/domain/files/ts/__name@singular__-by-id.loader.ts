@@ -7,7 +7,10 @@ import { In, Repository } from 'typeorm';
 import { <%= classify(singular(name)) %> } from './<%= singular(name) %>.entity';
 
 @Injectable({ scope: Scope.REQUEST })
-export class <%= classify(singular(name)) %>IdLoader extends DataLoader<string, Maybe<<%= classify(singular(name)) %>>> {
+export class <%= classify(singular(name)) %>ByIdLoader extends DataLoader<
+  string,
+  Maybe<<%= classify(singular(name)) %>>
+> {
   constructor(
     @InjectRepository(<%= classify(singular(name)) %>)
     private readonly repo: Repository<<%= classify(singular(name)) %>>,

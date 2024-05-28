@@ -4,7 +4,7 @@ import { Maybe } from 'graphql/jsutils/Maybe';
 import { <%= classify(singular(name)) %> } from '../<%= singular(name) %>.entity';
 
 @InterfaceType()
-export abstract class <%= classify(singular(name)) %>Id {
+export abstract class <%= classify(singular(name)) %>ById {
   @Field(() => ID, { nullable: true })
   <%= lowercased(singular(name)) %>Id?: Maybe<string>;
 
