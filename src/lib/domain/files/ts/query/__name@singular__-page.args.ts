@@ -1,8 +1,8 @@
 import { ArgsType } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
-import { NodePageArgs } from 'src/common/node.page.args';
-import { TypeField } from 'src/common/type-field.decorator';
 
+import { NodePageArgs } from '../../common/node.page.args';
+import { TypeField } from '../../common/type-field.decorator';
 import { <%= classify(singular(name)) %>OrderInput } from './<%= singular(name) %>-order.input';
 import { <%= classify(singular(name)) %>WhereInput } from './<%= singular(name) %>-where.input';
 

@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { NodePage } from 'src/common/node-page.type';
 
+import { NodePage } from '../../common/node-page.type';
 import { <%= classify(singular(name)) %> } from '../<%= singular(name) %>.entity';
 
 @ObjectType({
