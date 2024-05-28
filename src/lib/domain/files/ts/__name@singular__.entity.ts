@@ -1,8 +1,9 @@
 import { ObjectType } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
-import { ColumnField } from 'src/common/column-field.decorator';
-import { MetaEntity } from 'src/common/meta.entity';
 import { Entity } from 'typeorm';
+
+import { ColumnField } from '../common/column-field.decorator';
+import { MetaEntity } from '../common/meta.entity';
 
 @Entity()
 @ObjectType({ implements: [MetaEntity] })
