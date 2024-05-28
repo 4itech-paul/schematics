@@ -27,6 +27,8 @@ describe('Domain Factory', () => {
         '/domain-0001/domain-0001.module.ts',
         '/domain-0001/domain-0001.resolver.ts',
         '/domain-0001/domain-0001.service.ts',
+        '/domain-0001/domain-0001.resolver.spec.ts',
+        '/domain-0001/domain-0001.service.spec.ts',
         '/domain-0001/mutation/create-domain-0001.input.ts',
         '/domain-0001/mutation/create-domain-0001.output.ts',
         '/domain-0001/mutation/remove-domain-0001.input.ts',
@@ -309,8 +311,9 @@ export class CreateDomain0001Output {
     });
 
     it('should generate "RemoveDomain0001Input" class', () => {
-      expect(tree.readContent('/domain-0001/mutation/remove-domain-0001.input.ts'))
-        .toEqual(`import { Field, ID, InputType } from '@nestjs/graphql';
+      expect(
+        tree.readContent('/domain-0001/mutation/remove-domain-0001.input.ts'),
+      ).toEqual(`import { Field, ID, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class RemoveDomain0001Input {
@@ -321,8 +324,9 @@ export class RemoveDomain0001Input {
     });
 
     it('should generate "RemoveDomain0001Output" class', () => {
-      expect(tree.readContent('/domain-0001/mutation/remove-domain-0001.output.ts'))
-        .toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
+      expect(
+        tree.readContent('/domain-0001/mutation/remove-domain-0001.output.ts'),
+      ).toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
 
 import { Domain0001 } from '../domain-0001.entity';
 
@@ -335,7 +339,9 @@ export class RemoveDomain0001Output {
     });
 
     it('should generate "UpdateDomain0001Input" class', () => {
-      expect(tree.readContent('/domain-0001/mutation/update-domain-0001.input.ts'))
+      expect(
+        tree.readContent('/domain-0001/mutation/update-domain-0001.input.ts'),
+      )
         .toEqual(`import { Field, ID, InputType, OmitType, PartialType } from '@nestjs/graphql';
 
 import { CreateDomain0001Input } from './create-domain-0001.input';
@@ -352,8 +358,9 @@ export class UpdateDomain0001Input extends OmitType(
     });
 
     it('should generate "UpdateDomain0001Output" class', () => {
-      expect(tree.readContent('/domain-0001/mutation/update-domain-0001.output.ts'))
-        .toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
+      expect(
+        tree.readContent('/domain-0001/mutation/update-domain-0001.output.ts'),
+      ).toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
 
 import { Domain0001 } from '../domain-0001.entity';
 
@@ -460,5 +467,49 @@ export class Domain0001WhereInput extends OmitType(ToWhereInputType(Domain0001),
 }
 `);
     });
+  });
+
+  it('should create spec files', async () => {
+    const options: DomainOptions = {
+      name: 'foo',
+      type: 'rest',
+      spec: true,
+      flat: true,
+    };
+    const tree: UnitTestTree = await runner.runSchematic('main', options);
+    const files: string[] = tree.files;
+
+    expect(
+      files.find((filename) => filename === '/foo.controller.spec.ts'),
+    ).toBeDefined();
+    expect(
+      files.find((filename) => filename === '/foo.service.spec.ts'),
+    ).toBeDefined();
+  });
+
+  it('should create spec files with custom file suffix', async () => {
+    const options: DomainOptions = {
+      name: 'foo',
+      type: 'rest',
+      spec: true,
+      specFileSuffix: 'test',
+      flat: true,
+    };
+    const tree: UnitTestTree = await runner.runSchematic('main', options);
+    const files: string[] = tree.files;
+
+    expect(
+      files.find((filename) => filename === '/foo.controller.spec.ts'),
+    ).toBeUndefined();
+    expect(
+      files.find((filename) => filename === '/foo.controller.test.ts'),
+    ).toBeDefined();
+
+    expect(
+      files.find((filename) => filename === '/foo.service.spec.ts'),
+    ).toBeUndefined();
+    expect(
+      files.find((filename) => filename === '/foo.service.test.ts'),
+    ).toBeDefined();
   });
 });
