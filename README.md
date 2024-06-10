@@ -14,10 +14,6 @@
   <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
   <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
 
-## Description
-
-The Nest CLI is a command-line interface tool that helps you to initialize, develop, and maintain your Nest applications. It assists in multiple ways, including scaffolding the project, serving it in development mode, and building and bundling the application for production distribution. It embodies best-practice architectural patterns to encourage well-structured apps. Read more [here](https://docs.nestjs.com/cli/overview).
-
 ## Installation
 
 ```bash
@@ -26,31 +22,20 @@ $ npm install -D 4itech-schematics
 
 ## Usage
 
-Learn more in the [official documentation](https://docs.nestjs.com/).
+1. comment out settings.json
 
-comment out settings.json
+   ```json
+   "editor.formatOnSave": true,
+   "editor.codeActionsOnSave": {
+     "source.fixAll": "explicit",
+     "source.fixAll.eslint": "explicit",
+     "source.organizeImports": "explicit",
+     "source.sortMembers": "explicit"
+   },
+   ```
 
-```json
-"editor.formatOnSave": true,
-"editor.codeActionsOnSave": {
-  "source.fixAll": "explicit",
-  "source.fixAll.eslint": "explicit",
-  "source.organizeImports": "explicit",
-  "source.sortMembers": "explicit"
-},
-```
+2. Search (with Match Case & include files)
 
-Search (with Match Case & include files)
-
-- replace domain-0001 to <%= singular(name) %>
-- replace Domain0001 to <%= classify(singular(name)) %>
-- replace domain0001 to <%= lowercased(singular(name)) %>
-
-## Stay in touch
-
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+   - replace domain-0001 to <%= singular(name) %>
+   - replace Domain0001 to <%= classify(singular(name)) %>
+   - replace domain0001 to <%= lowercased(singular(name)) %>
