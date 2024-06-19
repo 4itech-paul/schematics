@@ -1,23 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
-
+import { <%= classify(name) %>Controller } from './<%= name %>.controller';
 import { <%= classify(name) %>Service } from './<%= name %>.service';
 
-describe('<%= classify(name) %>Service', () => {
-  let service: <%= classify(name) %>Service;
+describe('<%= classify(name) %>Controller', () => {
+  let controller: <%= classify(name) %>Controller;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      controllers: [<%= classify(name) %>Controller],
       providers: [<%= classify(name) %>Service],
     })
     .useMocker(() => ({}))
     .compile();
 
-    service = module.get<<%= classify(name) %>Service>(
-      <%= classify(name) %>Service,
-    );
+    controller = module.get<<%= classify(name) %>Controller>(<%= classify(name) %>Controller);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(controller).toBeDefined();
   });
 });
