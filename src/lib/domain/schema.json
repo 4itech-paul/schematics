@@ -38,13 +38,13 @@
     },
     "specFileSuffix": {
       "type": "string",
-      "default": "spec",
+      "default": "test",
       "description": "Specifies the file suffix of spec files."
     },
     "type": {
       "type": "string",
       "description": "The transport layer.",
-      "default": "rest",
+      "default": "graphql-code-first",
       "enum": [
         "rest",
         "graphql-code-first",
@@ -56,11 +56,11 @@
         "message": "What transport layer do you use?",
         "type": "list",
         "items": [
-          { "value": "rest", "label": "REST API" },
           {
             "value": "graphql-code-first",
             "label": "GraphQL (code first)"
           },
+          { "value": "rest", "label": "REST API" },
           {
             "value": "graphql-schema-first",
             "label": "GraphQL (schema first)"

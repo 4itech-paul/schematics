@@ -9,7 +9,9 @@ describe('<%= classify(name) %>Resolver', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [<%= classify(name) %>Resolver, <%= classify(name) %>Service],
-    }).compile();
+    })
+    .useMocker(() => ({}))
+    .compile();
 
     resolver = module.get<<%= classify(name) %>Resolver>(
       <%= classify(name) %>Resolver,
