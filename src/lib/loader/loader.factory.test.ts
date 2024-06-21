@@ -16,8 +16,6 @@ describe('Loader Factory', () => {
       const options: DomainOptions = {
         name: 'loader-0001',
         by: 'loader-0002',
-        crud: true,
-        type: 'graphql-code-first',
       };
       const tree = await runner.runSchematic('loader', options);
       const files = tree.files;
@@ -32,8 +30,6 @@ describe('Loader Factory', () => {
     const options: DomainOptions = {
       name: 'loader-0001',
       by: 'loader-0002',
-      crud: true,
-      type: 'graphql-code-first',
     };
 
     let tree: UnitTestTree;
