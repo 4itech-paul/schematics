@@ -52,7 +52,7 @@ function transform(options: DomainOptions): DomainOptions {
 
   const location: Location = new NameParser().parse(target);
   target.name = normalizeToKebabOrSnakeCase(location.name);
-  target.by = normalizeToKebabOrSnakeCase(location.by);
+  target.by = normalizeToKebabOrSnakeCase(target.by);
   target.path = normalizeToKebabOrSnakeCase(location.path);
   target.path = target.flat
     ? target.path
