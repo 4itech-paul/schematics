@@ -105,15 +105,15 @@ export class Domain0001ByIdResolver {
         .toEqual(`import { Field, ID, InterfaceType } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
-import { Domain0001 } from '../loader-0001.entity';
+import { Domain0010 } from '../domain-0010.entity';
 
 @InterfaceType()
-export abstract class Domain0001ById {
-  @Field(() => ID, { nullable: true })
-  domain0001Id?: Maybe<string>;
+export abstract class Domain0010sByDomain0009Id {
+  @Field(() => ID)
+  id!: string;
 
-  @Field(() => Domain0001, { nullable: true })
-  domain0001?: Maybe<Domain0001>;
+  @Field(() => [Domain0010], { nullable: true })
+  domain0010s?: Maybe<Domain0010[]>;
 }
 `);
     });
