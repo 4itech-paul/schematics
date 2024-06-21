@@ -23,7 +23,7 @@ export interface DomainOptions {
   spec?: boolean;
   /**
    * Specifies the file suffix of spec files.
-   * @default "test"
+   * @default "spec"
    */
   specFileSuffix?: string;
   /**

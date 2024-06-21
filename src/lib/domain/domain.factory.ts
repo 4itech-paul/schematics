@@ -61,7 +61,7 @@ function transform(options: DomainOptions): DomainOptions {
     );
   }
   target.specFileSuffix = normalizeToKebabOrSnakeCase(
-    options.specFileSuffix || 'test',
+    options.specFileSuffix || 'spec',
   );
 
   target.path = target.flat

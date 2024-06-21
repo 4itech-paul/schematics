@@ -28,8 +28,8 @@ describe('Domain Factory', () => {
         '/domain-0001/domain-0001.repository.ts',
         '/domain-0001/domain-0001.resolver.ts',
         '/domain-0001/domain-0001.service.ts',
-        '/domain-0001/domain-0001.resolver.test.ts',
-        '/domain-0001/domain-0001.service.test.ts',
+        '/domain-0001/domain-0001.resolver.spec.ts',
+        '/domain-0001/domain-0001.service.spec.ts',
         '/domain-0001/mutation/create-domain-0001.input.ts',
         '/domain-0001/mutation/create-domain-0001.output.ts',
         '/domain-0001/mutation/remove-domain-0001.input.ts',
@@ -490,14 +490,14 @@ export class Domain0001WhereInput extends OmitType(
       spec: true,
       flat: true,
     };
-    const tree: UnitTestTree = await runner.runSchematic('domain', options);
+    const tree: UnitTestTree = await runner.runSchematic('main', options);
     const files: string[] = tree.files;
 
     expect(
-      files.find((filename) => filename === '/foo.controller.test.ts'),
+      files.find((filename) => filename === '/foo.controller.spec.ts'),
     ).toBeDefined();
     expect(
-      files.find((filename) => filename === '/foo.service.test.ts'),
+      files.find((filename) => filename === '/foo.service.spec.ts'),
     ).toBeDefined();
   });
 
@@ -506,24 +506,24 @@ export class Domain0001WhereInput extends OmitType(
       name: 'foo',
       type: 'rest',
       spec: true,
-      specFileSuffix: 'spec',
+      specFileSuffix: 'test',
       flat: true,
     };
     const tree: UnitTestTree = await runner.runSchematic('domain', options);
     const files: string[] = tree.files;
 
     expect(
-      files.find((filename) => filename === '/foo.controller.test.ts'),
+      files.find((filename) => filename === '/foo.controller.spec.ts'),
     ).toBeUndefined();
     expect(
-      files.find((filename) => filename === '/foo.controller.spec.ts'),
+      files.find((filename) => filename === '/foo.controller.test.ts'),
     ).toBeDefined();
 
     expect(
-      files.find((filename) => filename === '/foo.service.test.ts'),
+      files.find((filename) => filename === '/foo.service.spec.ts'),
     ).toBeUndefined();
     expect(
-      files.find((filename) => filename === '/foo.service.spec.ts'),
+      files.find((filename) => filename === '/foo.service.test.ts'),
     ).toBeDefined();
   });
 });
