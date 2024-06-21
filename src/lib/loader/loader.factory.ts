@@ -4,10 +4,8 @@ import {
   apply,
   branchAndMerge,
   chain,
-  filter,
   mergeWith,
   move,
-  noop,
   Rule,
   SchematicContext,
   SchematicsException,
@@ -18,7 +16,6 @@ import {
 } from '@angular-devkit/schematics';
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 import * as pluralize from 'pluralize';
-import { DeclarationOptions, ModuleDeclarator, ModuleFinder } from '../..';
 import {
   addPackageJsonDependency,
   getPackageJsonDependency,
@@ -35,9 +32,8 @@ export function main(options: DomainOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
     return branchAndMerge(
       chain([
-        addMappedTypesDependencyIfApplies(options),
+        addMappedTypesDependencyIfApplies(),
         mergeSourceRoot(options),
-        addDeclarationToModule(options),
         mergeWith(generate(options)),
       ]),
     )(tree, context);
@@ -49,21 +45,15 @@ function transform(options: DomainOptions): DomainOptions {
   if (!target.name) {
     throw new SchematicsException('Option (name) is required.');
   }
+  if (!target.by) {
+    throw new SchematicsException('Option (by) is required.');
+  }
   target.metadata = 'imports';
 
   const location: Location = new NameParser().parse(target);
   target.name = normalizeToKebabOrSnakeCase(location.name);
+  target.by = normalizeToKebabOrSnakeCase(location.by);
   target.path = normalizeToKebabOrSnakeCase(location.path);
-  target.language = target.language !== undefined ? target.language : 'ts';
-  if (target.language === 'js') {
-    throw new Error(
-      'The "loader" schematic does not support JavaScript language (only TypeScript is supported).',
-    );
-  }
-  target.specFileSuffix = normalizeToKebabOrSnakeCase(
-    options.specFileSuffix || 'spec',
-  );
-
   target.path = target.flat
     ? target.path
     : join(target.path as Path, target.name);
@@ -74,60 +64,7 @@ function transform(options: DomainOptions): DomainOptions {
 
 function generate(options: DomainOptions): Source {
   return (context: SchematicContext) =>
-    apply(url(join('./files' as Path, options.language)), [
-      filter((path) => {
-        if (path.endsWith('.dto.ts')) {
-          return (
-            options.type !== 'graphql-code-first' &&
-            options.type !== 'graphql-schema-first' &&
-            options.crud
-          );
-        }
-        if (path.endsWith('.input.ts')) {
-          return (
-            (options.type === 'graphql-code-first' ||
-              options.type === 'graphql-schema-first') &&
-            options.crud
-          );
-        }
-        if (
-          path.endsWith('.resolver.ts') ||
-          path.endsWith('.resolver.__specFileSuffix__.ts')
-        ) {
-          return (
-            options.type === 'graphql-code-first' ||
-            options.type === 'graphql-schema-first'
-          );
-        }
-        if (path.endsWith('.graphql')) {
-          return options.type === 'graphql-schema-first' && options.crud;
-        }
-        if (
-          path.endsWith('controller.ts') ||
-          path.endsWith('.controller.__specFileSuffix__.ts')
-        ) {
-          return options.type === 'microservice' || options.type === 'rest';
-        }
-        if (
-          path.endsWith('.gateway.ts') ||
-          path.endsWith('.gateway.__specFileSuffix__.ts')
-        ) {
-          return options.type === 'ws';
-        }
-        if (path.includes('@ent')) {
-          // Entity class file workaround
-          // When an invalid glob path for entities has been specified (on the application part)
-          // TypeORM was trying to load a template class
-          return options.crud;
-        }
-        return true;
-      }),
-      options.spec
-        ? noop()
-        : filter((path) => {
-            const suffix = `.__specFileSuffix__.ts`;
-            return !path.endsWith(suffix);
-          }),
+    apply(url(join('./files' as Path, 'ts')), [
       template({
         ...strings,
         ...options,
@@ -138,53 +75,14 @@ function generate(options: DomainOptions): Source {
           );
         },
         singular: (name: string) => pluralize.singular(name),
-        ent: (name: string) => name + '.entity',
       }),
       move(options.path),
     ])(context);
 }
 
-function addDeclarationToModule(options: DomainOptions): Rule {
-  return (tree: Tree) => {
-    if (options.skipImport !== undefined && options.skipImport) {
-      return tree;
-    }
-    options.module = new ModuleFinder(tree).find({
-      name: options.name,
-      path: options.path as Path,
-    });
-    if (!options.module) {
-      return tree;
-    }
-    const content = tree.read(options.module).toString();
-    const declarator: ModuleDeclarator = new ModuleDeclarator();
-    tree.overwrite(
-      options.module,
-      declarator.declare(content, {
-        ...options,
-        type: 'module',
-      } as DeclarationOptions),
-    );
-    return tree;
-  };
-}
-
-function addMappedTypesDependencyIfApplies(options: DomainOptions): Rule {
+function addMappedTypesDependencyIfApplies(): Rule {
   return (host: Tree, context: SchematicContext) => {
     try {
-      if (options.type === 'graphql-code-first') {
-        return;
-      }
-      if (options.type === 'rest') {
-        const nodeDependencyRef = getPackageJsonDependency(
-          host,
-          '@nestjs/swagger',
-        );
-        if (nodeDependencyRef) {
-          options.isSwaggerInstalled = true;
-          return;
-        }
-      }
       const nodeDependencyRef = getPackageJsonDependency(
         host,
         '@nestjs/mapped-types',
