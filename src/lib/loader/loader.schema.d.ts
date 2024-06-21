@@ -6,6 +6,10 @@ export interface DomainOptions {
    */
   name: string;
   /**
+   * The name of the loader by.
+   */
+  by: string;
+  /**
    * The path to create the loader.
    */
   path?: string | Path;
