@@ -45,23 +45,23 @@ import DataLoader from 'dataloader';
 import { Maybe } from 'graphql/jsutils/Maybe';
 import { In } from 'typeorm';
 
-import { Domain0010 } from './domain-0010.entity';
-import { Domain0010Repository } from './domain-0010.repository';
+import { Domain0002 } from './domain-0002.entity';
+import { Domain0002Repository } from './domain-0002.repository';
 
 @Injectable({ scope: Scope.REQUEST })
-export class Domain0010sByDomain0009IdLoader extends DataLoader<
+export class Domain0002sByDomain0001IdLoader extends DataLoader<
   string,
-  Maybe<Domain0010[]>
+  Maybe<Domain0002[]>
 > {
-  constructor(private readonly repo: Domain0010Repository) {
-    super(async (keys: readonly string[]): Promise<Maybe<Domain0010[]>[]> => {
+  constructor(private readonly repo: Domain0002Repository) {
+    super(async (keys: readonly string[]): Promise<Maybe<Domain0002[]>[]> => {
       const daoArray = await this.repo.find({
         where: {
-          domain0009Id: In(keys),
+          domain0001Id: In(keys),
         },
       });
       return keys.map((key) =>
-        daoArray.filter((dao) => key === dao.domain0009Id),
+        daoArray.filter((dao) => key === dao.domain0001Id),
       );
     });
   }
@@ -74,19 +74,19 @@ export class Domain0010sByDomain0009IdLoader extends DataLoader<
         .toEqual(`import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
-import { Domain0010 } from './domain-0010.entity';
-import { Domain0010sByDomain0009IdLoader } from './domain-0010s-by-domain-0009-id.loader';
-import { Domain0010sByDomain0009Id } from './query/domain-0010s-by-domain-0009-id.type';
+import { Domain0002 } from './domain-0002.entity';
+import { Domain0002sByDomain0001IdLoader } from './domain-0002s-by-domain-0001-id.loader';
+import { Domain0002sByDomain0001Id } from './query/domain-0002s-by-domain-0001-id.type';
 
-@Resolver(() => Domain0010sByDomain0009Id)
-export class Domain0010sByDomain0009IdResolver {
-  constructor(private readonly loader: Domain0010sByDomain0009IdLoader) {}
+@Resolver(() => Domain0002sByDomain0001Id)
+export class Domain0002sByDomain0001IdResolver {
+  constructor(private readonly loader: Domain0002sByDomain0001IdLoader) {}
 
-  @ResolveField(() => [Domain0010], { nullable: true })
-  async domain0010s(
-    @Parent() { id, domain0010s }: Domain0010sByDomain0009Id,
-  ): Promise<Maybe<Domain0010[]>> {
-    if (domain0010s) return domain0010s;
+  @ResolveField(() => [Domain0002], { nullable: true })
+  async domain0002s(
+    @Parent() { id, domain0002s }: Domain0002sByDomain0001Id,
+  ): Promise<Maybe<Domain0002[]>> {
+    if (domain0002s) return domain0002s;
     return this.loader.load(id);
   }
 }
@@ -98,15 +98,15 @@ export class Domain0010sByDomain0009IdResolver {
         .toEqual(`import { Field, ID, InterfaceType } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
-import { Domain0010 } from '../domain-0010.entity';
+import { Domain0002 } from '../domain-0002.entity';
 
 @InterfaceType()
-export abstract class Domain0010sByDomain0009Id {
+export abstract class Domain0002sByDomain0001Id {
   @Field(() => ID)
   id!: string;
 
-  @Field(() => [Domain0010], { nullable: true })
-  domain0010s?: Maybe<Domain0010[]>;
+  @Field(() => [Domain0002], { nullable: true })
+  domain0002s?: Maybe<Domain0002[]>;
 }
 `);
     });
