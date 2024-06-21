@@ -12,6 +12,7 @@ src/lib/**/*.d.ts
 !src/lib/resource/*.d.ts
 !src/lib/main/*.d.ts
 !src/lib/domain/*.d.ts
+!src/lib/loader/*.d.ts
 !src/lib/**/files/**/*
 !src/lib/**/workspace/**/*
 src/utils/**/*.js
