@@ -129,6 +129,12 @@
       "description": "Create 4i domain resource.",
       "schema": "./lib/domain/schema.json",
       "aliases": ["do"]
+    },
+    "loader": {
+      "factory": "./lib/loader/loader.factory#main",
+      "description": "Create 4i loader resource.",
+      "schema": "./lib/loader/schema.json",
+      "aliases": ["lo"]
     }
   }
 }
