@@ -1,13 +1,13 @@
 import { Field, ID, InterfaceType } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
-import { Domain0010 } from '../domain-0010.entity';
+import { <%= classify(singular(name)) %> } from '../<%= singular(name) %>.entity';
 
 @InterfaceType()
-export abstract class Domain0010sByDomain0009Id {
+export abstract class <%= classify(name) %>By<%= classify(by) %> {
   @Field(() => ID)
   id!: string;
 
-  @Field(() => [Domain0010], { nullable: true })
-  domain0010s?: Maybe<Domain0010[]>;
+  @Field(() => [<%= classify(singular(name)) %>], { nullable: true })
+  <%= lowercased(name) %>?: Maybe<<%= classify(singular(name)) %>[]>;
 }

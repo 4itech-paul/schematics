@@ -1,19 +1,19 @@
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
-import { Domain0010 } from './domain-0010.entity';
-import { Domain0010sByDomain0009IdLoader } from './domain-0010s-by-domain-0009-id.loader';
-import { Domain0010sByDomain0009Id } from './query/domain-0010s-by-domain-0009-id.type';
+import { <%= classify(singular(name)) %> } from './<%= singular(name) %>.entity';
+import { <%= classify(name) %>By<%= classify(by) %>Loader } from './<%= name %>-by-<%= by %>.loader';
+import { <%= classify(name) %>By<%= classify(by) %> } from './query/<%= name %>-by-<%= by %>.type';
 
-@Resolver(() => Domain0010sByDomain0009Id)
-export class Domain0010sByDomain0009IdResolver {
-  constructor(private readonly loader: Domain0010sByDomain0009IdLoader) {}
+@Resolver(() => <%= classify(name) %>By<%= classify(by) %>)
+export class <%= classify(name) %>By<%= classify(by) %>Resolver {
+  constructor(private readonly loader: <%= classify(name) %>By<%= classify(by) %>Loader) {}
 
-  @ResolveField(() => [Domain0010], { nullable: true })
-  async domain0010s(
-    @Parent() { id, domain0010s }: Domain0010sByDomain0009Id,
-  ): Promise<Maybe<Domain0010[]>> {
-    if (domain0010s) return domain0010s;
+  @ResolveField(() => [<%= classify(singular(name)) %>], { nullable: true })
+  async <%= lowercased(name) %>(
+    @Parent() { id, <%= lowercased(name) %> }: <%= classify(name) %>By<%= classify(by) %>,
+  ): Promise<Maybe<<%= classify(singular(name)) %>[]>> {
+    if (<%= lowercased(name) %>) return <%= lowercased(name) %>;
     return this.loader.load(id);
   }
 }
