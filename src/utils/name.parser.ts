@@ -8,7 +8,6 @@ export interface ParseOptions {
 export interface Location {
   name: string;
   path: Path;
-  by?: string;
 }
 
 export class NameParser {
