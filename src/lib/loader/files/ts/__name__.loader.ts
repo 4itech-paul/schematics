@@ -7,7 +7,7 @@ import { <%= classify(singular(entities)) %> } from './<%= singular(entities) %>
 import { <%= classify(singular(entities)) %>Repository } from './<%= singular(entities) %>.repository';
 
 @Injectable({ scope: Scope.REQUEST })
-export class <%= classify(entities) %>By<%= classify(by) %>Loader extends DataLoader<
+export class <%= classify(name) %>Loader extends DataLoader<
   string,
   Maybe<<%= classify(singular(entities)) %>[]>
 > {

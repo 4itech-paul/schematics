@@ -42,11 +42,9 @@ $ npm install -D 4itech-schematics
 
 2. Loader: Search (with Match Case & include files)
 
-   - replace domain-0002s to <%= name %>
-   - replace Domain0002s to <%= classify(name) %>
-   - replace domain0002s to <%= lowercased(name) %>
-   - replace domain-0002 to <%= singular(name) %>
-   - replace Domain0002 to <%= classify(singular(name)) %>
-   - replace domain-0001-id to <%= by %>
-   - replace Domain0001Id to <%= classify(by) %>
+   - replace domain-0002s-by-domain-0001-id to <%= name %>
+   - replace Domain0002sByDomain0001Id to <%= classify(name) %>
+   - replace domain-0002 to <%= singular(entities) %>
+   - replace Domain0002 to <%= classify(singular(entities)) %>
+   - replace domain0002 to <%= lowercased(singular(entities)) %>
    - replace domain0001Id to <%= lowercased(by) %>

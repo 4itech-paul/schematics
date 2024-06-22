@@ -2,18 +2,18 @@ import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 
 import { <%= classify(singular(entities)) %> } from './<%= singular(entities) %>.entity';
-import { <%= classify(entities) %>By<%= classify(by) %>Loader } from './<%= entities %>-by-<%= by %>.loader';
-import { <%= classify(entities) %>By<%= classify(by) %> } from './query/<%= entities %>-by-<%= by %>.type';
+import { <%= classify(name) %>Loader } from './<%= name %>.loader';
+import { <%= classify(name) %> } from './query/<%= name %>.type';
 
-@Resolver(() => <%= classify(entities) %>By<%= classify(by) %>)
-export class <%= classify(entities) %>By<%= classify(by) %>Resolver {
-  constructor(private readonly loader: <%= classify(entities) %>By<%= classify(by) %>Loader) {}
+@Resolver(() => <%= classify(name) %>)
+export class <%= classify(name) %>Resolver {
+  constructor(private readonly loader: <%= classify(name) %>Loader) {}
 
   @ResolveField(() => [<%= classify(singular(entities)) %>], { nullable: true })
-  async <%= lowercased(entities) %>(
-    @Parent() { id, <%= lowercased(entities) %> }: <%= classify(entities) %>By<%= classify(by) %>,
+  async <%= lowercased(singular(entities)) %>s(
+    @Parent() { id, <%= lowercased(singular(entities)) %>s }: <%= classify(name) %>,
   ): Promise<Maybe<<%= classify(singular(entities)) %>[]>> {
-    if (<%= lowercased(entities) %>) return <%= lowercased(entities) %>;
+    if (<%= lowercased(singular(entities)) %>s) return <%= lowercased(singular(entities)) %>s;
     return this.loader.load(id);
   }
 }
