@@ -8,7 +8,11 @@ export interface DomainOptions {
   /**
    * The name of the loader by.
    */
-  by: string;
+  entities?: string;
+  /**
+   * The name of the loader by.
+   */
+  by?: string;
   /**
    * The path to create the loader.
    */
@@ -29,10 +33,6 @@ export interface DomainOptions {
    * Directive to insert declaration in module.
    */
   skipImport?: boolean;
-  /**
-   * Flag to indicate if a directory is created.
-   */
-  flat?: boolean;
   /**
    * When true, "@nestjs/swagger" dependency is installed in the project.
    */

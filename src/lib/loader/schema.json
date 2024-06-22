@@ -13,11 +13,6 @@
       },
       "x-prompt": "What entity would you like to use for this loader (plural, e.g., \"users\")?"
     },
-    "by": {
-      "type": "string",
-      "description": "The name of the loader by.",
-      "x-prompt": "What field would you like to use for this loader by?"
-    },
     "path": {
       "type": "string",
       "format": "path",
@@ -27,16 +22,11 @@
       "type": "string",
       "description": "Nest loader source root directory."
     },
-    "flat": {
-      "type": "boolean",
-      "default": false,
-      "description": "Flag to indicate if a directory is created."
-    },
     "skipImport": {
       "type": "boolean",
       "description": "Flag to skip the module import.",
       "default": false
     }
   },
-  "required": ["name", "by"]
+  "required": ["name"]
 }
