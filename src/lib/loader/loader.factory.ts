@@ -45,18 +45,19 @@ function transform(options: DomainOptions): DomainOptions {
   if (!target.name) {
     throw new SchematicsException('Option (name) is required.');
   }
-  if (!target.by) {
-    throw new SchematicsException('Option (by) is required.');
-  }
   target.metadata = 'imports';
 
   const location: Location = new NameParser().parse(target);
   target.name = normalizeToKebabOrSnakeCase(location.name);
-  target.by = normalizeToKebabOrSnakeCase(target.by);
+  const [entities, by] = target.name.split('-by-');
+  if (entities.length === 0 || by.length === 0) {
+    throw new SchematicsException(
+      'Invalid name. Name should be in the format [entities]-by-[by].',
+    );
+  }
+  target.entities = entities;
+  target.by = by;
   target.path = normalizeToKebabOrSnakeCase(location.path);
-  target.path = target.flat
-    ? target.path
-    : join(target.path as Path, target.name);
   target.isSwaggerInstalled = options.isSwaggerInstalled ?? false;
 
   return target;

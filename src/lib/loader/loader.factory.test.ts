@@ -14,8 +14,8 @@ describe('Loader Factory', () => {
   describe('[GraphQL - Code first]', () => {
     it('should generate appropriate files ', async () => {
       const options: DomainOptions = {
-        name: 'domain-0002s',
-        by: 'domain-0001-id',
+        name: 'domain-0002s-by-domain-0001-id',
+        path: 'domain-0002s'
       };
       const tree = await runner.runSchematic('loader', options);
       const files = tree.files;
@@ -28,8 +28,8 @@ describe('Loader Factory', () => {
   });
   describe('[GraphQL - Code first]', () => {
     const options: DomainOptions = {
-      name: 'domain-0002s',
-      by: 'domain-0001-id',
+      name: 'domain-0002s-by-domain-0001-id',
+      path: 'domain-0002s'
     };
 
     let tree: UnitTestTree;
