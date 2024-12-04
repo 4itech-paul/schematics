@@ -1,18 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { <%= classify(name) %>Resolver } from './<%= name %>.resolver';
-import { <%= classify(name) %>Service } from './<%= name %>.service';
+import { <%= classify(singular(name)) %>Resolver } from './<%= singular(name) %>.resolver';
+import { <%= classify(singular(name)) %>Service } from './<%= singular(name) %>.service';
 
-describe('<%= classify(name) %>Resolver', () => {
-  let resolver: <%= classify(name) %>Resolver;
+describe('<%= classify(singular(name)) %>Resolver', () => {
+  let resolver: <%= classify(singular(name)) %>Resolver;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [<%= classify(name) %>Resolver, <%= classify(name) %>Service],
+      providers: [<%= classify(singular(name)) %>Resolver, <%= classify(singular(name)) %>Service],
     }).compile();
 
-    resolver = module.get<<%= classify(name) %>Resolver>(
-      <%= classify(name) %>Resolver,
+    resolver = module.get<<%= classify(singular(name)) %>Resolver>(
+      <%= classify(singular(name)) %>Resolver,
     );
   });
 

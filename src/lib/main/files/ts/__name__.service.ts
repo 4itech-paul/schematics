@@ -1,13 +1,10 @@
 import { DaoIdNotFoundError } from '@app/graphql-type/error/dao-id-not-found.error';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { BaseService } from 'apps/main/src/common/base.service';
-import { EntityManager, Repository } from 'typeorm';
+import { Transactional } from 'typeorm-transactional';
 
-import { ServiceMetadata } from '../common/service-metadata.interface';
-import { User } from '../user/user.entity';
 import { <%= classify(singular(name)) %>PageArgs } from './args/<%= singular(name) %>-page.args';
 import { <%= classify(singular(name)) %> } from './<%= singular(name) %>.entity';
+import { <%= classify(singular(name)) %>Repository } from './<%= singular(name) %>.repository';
 import { Create<%= classify(singular(name)) %>Input } from './input/create-<%= singular(name) %>.input';
 import { Update<%= classify(singular(name)) %>Input } from './input/update-<%= singular(name) %>.input';
 import { Create<%= classify(singular(name)) %>Output } from './output/create-<%= singular(name) %>.output';
@@ -16,106 +13,50 @@ import { Update<%= classify(singular(name)) %>Output } from './output/update-<%=
 import { <%= classify(singular(name)) %>PageType } from './type/<%= singular(name) %>-page.type';
 
 @Injectable()
-export class <%= classify(singular(name)) %>Service extends BaseService<<%= classify(singular(name)) %>> {
-  constructor(
-    private readonly manager: EntityManager,
-    @InjectRepository(<%= classify(singular(name)) %>)
-    private readonly <%= lowercased(singular(name)) %>Repo: Repository<<%= classify(singular(name)) %>>,
-  ) {
-    super(<%= lowercased(singular(name)) %>Repo);
+export class <%= classify(singular(name)) %>Service {
+  constructor(private readonly repo: <%= classify(singular(name)) %>Repository) {}
+
+  @Transactional()
+  async createOne(input: Create<%= classify(singular(name)) %>Input): Promise<Create<%= classify(singular(name)) %>Output> {
+    const <%= lowercased(singular(name)) %> = await this.repo.save(input);
+
+    return { <%= lowercased(singular(name)) %> };
   }
 
-  async createOne(
-    input: Create<%= classify(singular(name)) %>Input,
-    user: User,
-    metadata?: Pick<ServiceMetadata, 'manager'>,
-  ): Promise<Create<%= classify(singular(name)) %>Output> {
-    const transaction = async (manager: EntityManager) => {
-      const <%= lowercased(singular(name)) %> = await this.save(
-        {
-          ...input,
-          createdBy: user.id,
-          updatedBy: user.id,
-        },
-        { manager },
-      );
-
-      return { <%= lowercased(singular(name)) %> };
-    };
-
-    return metadata?.manager
-      ? transaction(metadata.manager)
-      : this.manager.transaction('READ COMMITTED', transaction);
+  @Transactional()
+  async findByPageArgs(args: <%= classify(singular(name)) %>PageArgs): Promise<<%= classify(singular(name)) %>PageType> {
+    return this.repo.findNodePage({ ...args, where: args.where?.toFindOptionsWhere() });
   }
 
-  async findByPageArgs(
-    args: <%= classify(singular(name)) %>PageArgs,
-    metadata?: Pick<ServiceMetadata, 'manager'>,
-  ): Promise<<%= classify(singular(name)) %>PageType> {
-    return this.findNodePage(
-      { ...args, where: args.where.toFindOptionsWhere() },
-      metadata,
-    );
+  @Transactional()
+  async findById(id: string): Promise<<%= classify(singular(name)) %> | null> {
+    return this.repo.findOneBy({ id });
   }
 
-  async findById(
-    id: string,
-    metadata?: Pick<ServiceMetadata, 'manager'>,
-  ): Promise<<%= classify(singular(name)) %> | null> {
-    if (metadata?.manager) {
-      const <%= lowercased(singular(name)) %>Repo = metadata.manager.getRepository(<%= classify(singular(name)) %>);
-      return <%= lowercased(singular(name)) %>Repo.findOneBy({ id });
+  @Transactional()
+  async updateOne(input: Update<%= classify(singular(name)) %>Input): Promise<Update<%= classify(singular(name)) %>Output> {
+    const <%= lowercased(singular(name)) %> = await this.repo.preload({
+      ...input,
+    });
+    if (!<%= lowercased(singular(name)) %>) {
+      throw new DaoIdNotFoundError(<%= classify(singular(name)) %>, input.id);
     }
 
-    return this.<%= lowercased(singular(name)) %>Repo.findOneBy({ id });
+    await this.repo.save(<%= lowercased(singular(name)) %>);
+
+    return {
+      <%= lowercased(singular(name)) %>,
+    };
   }
 
-  async updateOne(
-    id: string,
-    input: Update<%= classify(singular(name)) %>Input,
-    user: User,
-    metadata?: Pick<ServiceMetadata, 'manager'>,
-  ): Promise<Update<%= classify(singular(name)) %>Output> {
-    const transaction = async (manager: EntityManager) => {
-      const <%= lowercased(singular(name)) %>Repo = manager.getRepository(<%= classify(singular(name)) %>);
+  @Transactional()
+  async removeOne(id: string): Promise<Remove<%= classify(singular(name)) %>Output> {
+    const <%= lowercased(singular(name)) %> = await this.repo.findOneByOrFail({ id });
 
-      const <%= lowercased(singular(name)) %> = await <%= lowercased(singular(name)) %>Repo.preload({
-        ...input,
-        updatedBy: user.id,
-        id,
-      });
-      if (!<%= lowercased(singular(name)) %>) {
-        throw new DaoIdNotFoundError(<%= classify(singular(name)) %>, id);
-      }
+    await this.repo.softRemove(<%= lowercased(singular(name)) %>);
 
-      await <%= lowercased(singular(name)) %>Repo.save(<%= lowercased(singular(name)) %>);
-
-      return {
-        <%= lowercased(singular(name)) %>,
-      };
+    return {
+      <%= lowercased(singular(name)) %>,
     };
-
-    return metadata?.manager
-      ? transaction(metadata.manager)
-      : this.manager.transaction('READ COMMITTED', transaction);
-  }
-
-  async removeOne(
-    id: string,
-    metadata?: Pick<ServiceMetadata, 'manager'>,
-  ): Promise<Remove<%= classify(singular(name)) %>Output> {
-    const transaction = async (manager: EntityManager) => {
-      const <%= lowercased(singular(name)) %> = await this.findOneByOrFail({ id }, { manager });
-
-      await this.softRemove(<%= lowercased(singular(name)) %>, { manager });
-
-      return {
-        <%= lowercased(singular(name)) %>,
-      };
-    };
-
-    return metadata?.manager
-      ? transaction(metadata.manager)
-      : this.manager.transaction('READ COMMITTED', transaction);
   }
 }

@@ -8,7 +8,7 @@ import { Entity } from 'typeorm';
 
 @ObjectType({ implements: [MainDaoNode] })
 @Entity()
-export class <%= singular(classify(name)) %> extends CustomBaseEntity {
+export class <%= classify(singular(name)) %> extends CustomBaseEntity {
   @ColumnField({
     type: 'varchar',
     length: VarcharLength.Short,

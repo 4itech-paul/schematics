@@ -1,16 +1,11 @@
-<% if (type === 'graphql-code-first') { %>import { Field, ID, InputType, PartialType } from '@nestjs/graphql';
+import { Field, ID, InputType, PartialType } from '@nestjs/graphql';
 
-import { Create<%= singular(classify(name)) %>Input } from './create-<%= singular(name) %>.input';
+import { Create<%= classify(singular(name)) %>Input } from './create-<%= singular(name) %>.input';
 
 @InputType()
-export class Update<%= singular(classify(name)) %>Input extends PartialType(
-  Create<%= singular(classify(name)) %>Input,
+export class Update<%= classify(singular(name)) %>Input extends PartialType(
+  Create<%= classify(singular(name)) %>Input,
 ) {
   @Field(() => ID)
   id!: string;
-}<% } else { %>import { Create<%= singular(classify(name)) %>Input } from './create-<%= singular(name) %>.input';
-import { PartialType } from '@nestjs/mapped-types';
-
-export class Update<%= singular(classify(name)) %>Input extends PartialType(Create<%= singular(classify(name)) %>Input) {
-  id: number;
-}<% } %>
+}

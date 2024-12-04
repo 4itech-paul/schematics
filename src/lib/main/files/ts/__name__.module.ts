@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { <%= singular(classify(name)) %> } from './<%= singular(name) %>.entity';
-import { <%= singular(classify(name)) %>Resolver } from './<%= singular(name) %>.resolver';
-import { <%= singular(classify(name)) %>Service } from './<%= singular(name) %>.service';
+import { <%= classify(singular(name)) %> } from './<%= singular(name) %>.entity';
+import { <%= classify(singular(name)) %>Resolver } from './<%= singular(name) %>.resolver';
+import { <%= classify(singular(name)) %>Service } from './<%= singular(name) %>.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([<%= singular(classify(name)) %>])],
+  imports: [TypeOrmModule.forFeature([<%= classify(singular(name)) %>])],
   providers: [
-    <%= singular(classify(name)) %>Resolver,
-    <%= singular(classify(name)) %>Service,
-    // <%= singular(classify(name)) %>By<%= singular(classify(name)) %>IdLoader,
-    // With<%= singular(classify(name)) %>Resolver,
+    <%= classify(singular(name)) %>Resolver,
+    <%= classify(singular(name)) %>Service,
+    // <%= classify(singular(name)) %>By<%= classify(singular(name)) %>IdLoader,
+    // With<%= classify(singular(name)) %>Resolver,
   ],
 })
-export class <%= singular(classify(name)) %>Module {}
+export class <%= classify(singular(name)) %>Module {}

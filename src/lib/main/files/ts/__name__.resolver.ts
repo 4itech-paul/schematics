@@ -1,59 +1,49 @@
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
+import { Transactional } from 'typeorm-transactional';
 
-import { UserDecorator } from '../auth/user.decorator';
-import { User } from '../user/user.entity';
-import { <%= singular(classify(name)) %>PageArgs } from './args/<%= singular(name) %>-page.args';
-import { Create<%= singular(classify(name)) %>Input } from './input/create-<%= singular(name) %>.input';
-import { Remove<%= singular(classify(name)) %>Input } from './input/remove-<%= singular(name) %>.input';
-import { Update<%= singular(classify(name)) %>Input } from './input/update-<%= singular(name) %>.input';
-import { Create<%= singular(classify(name)) %>Output } from './output/create-<%= singular(name) %>.output';
-import { Remove<%= singular(classify(name)) %>Output } from './output/remove-<%= singular(name) %>.output';
-import { Update<%= singular(classify(name)) %>Output } from './output/update-<%= singular(name) %>.output';
-import { <%= singular(classify(name)) %>PageType } from './type/<%= page(singular(name)) %>.type';
-import { <%= singular(classify(name)) %> } from './<%= singular(name) %>.entity';
-import { <%= singular(classify(name)) %>Service } from './<%= singular(name) %>.service';
+import { <%= classify(singular(name)) %>PageArgs } from './args/<%= singular(name) %>-page.args';
+import { <%= classify(singular(name)) %> } from './<%= singular(name) %>.entity';
+import { <%= classify(singular(name)) %>Service } from './<%= singular(name) %>.service';
+import { Create<%= classify(singular(name)) %>Input } from './input/create-<%= singular(name) %>.input';
+import { Remove<%= classify(singular(name)) %>Input } from './input/remove-<%= singular(name) %>.input';
+import { Update<%= classify(singular(name)) %>Input } from './input/update-<%= singular(name) %>.input';
+import { Create<%= classify(singular(name)) %>Output } from './output/create-<%= singular(name) %>.output';
+import { Remove<%= classify(singular(name)) %>Output } from './output/remove-<%= singular(name) %>.output';
+import { Update<%= classify(singular(name)) %>Output } from './output/update-<%= singular(name) %>.output';
+import { <%= classify(singular(name)) %>PageType } from './type/<%= singular(name) %>-page.type';
 
-@Resolver(() => <%= singular(classify(name)) %>)
-export class <%= singular(classify(name)) %>Resolver {
-  constructor(
-    private readonly <%= singular(lowercased(name)) %>Service: <%= singular(classify(name)) %>Service,
-  ) {}
+@Resolver(() => <%= classify(singular(name)) %>)
+export class <%= classify(singular(name)) %>Resolver {
+  constructor(private readonly <%= lowercased(singular(name)) %>Service: <%= classify(singular(name)) %>Service) {}
 
-  @Mutation(() => Create<%= singular(classify(name)) %>Output)
-  async create<%= singular(classify(name)) %>(
-    @Args('input') input: Create<%= singular(classify(name)) %>Input,
-    @UserDecorator() user: User,
-  ): Promise<Create<%= singular(classify(name)) %>Output> {
-    return this.<%= singular(lowercased(name)) %>Service.createOne(input, user);
+  @Transactional()
+  @Mutation(() => Create<%= classify(singular(name)) %>Output)
+  async create<%= classify(singular(name)) %>(@Args('input') input: Create<%= classify(singular(name)) %>Input): Promise<Create<%= classify(singular(name)) %>Output> {
+    return this.<%= lowercased(singular(name)) %>Service.createOne(input);
   }
 
-  @Query(() => <%= singular(classify(name)) %>PageType)
-  async <%= lowercased((singular(classify(name)))) %>Page(
-    @Args() args: <%= singular(classify(name)) %>PageArgs,
-  ): Promise<<%= singular(classify(name)) %>PageType> {
-    return this.<%= singular(lowercased(name)) %>Service.findByPageArgs(args);
+  @Transactional()
+  @Query(() => <%= classify(singular(name)) %>PageType)
+  async <%= lowercased(singular(name)) %>Page(@Args() args: <%= classify(singular(name)) %>PageArgs): Promise<<%= classify(singular(name)) %>PageType> {
+    return this.<%= lowercased(singular(name)) %>Service.findByPageArgs(args);
   }
 
-  @Query(() => <%= singular(classify(name)) %>)
-  async <%= lowercased(singular(classify(name))) %>(
-    @Args('id', { type: () => ID }) id: string,
-  ): Promise<Maybe<<%= singular(classify(name)) %>>> {
-    return this.<%= singular(lowercased(name)) %>Service.findById(id);
+  @Transactional()
+  @Query(() => <%= classify(singular(name)) %>)
+  async <%= lowercased(singular(name)) %>(@Args('id', { type: () => ID }) id: string): Promise<Maybe<<%= classify(singular(name)) %>>> {
+    return this.<%= lowercased(singular(name)) %>Service.findById(id);
   }
 
-  @Mutation(() => Update<%= singular(classify(name)) %>Output)
-  async update<%= singular(classify(name)) %>(
-    @Args('input') input: Update<%= singular(classify(name)) %>Input,
-    @UserDecorator() user: User,
-  ): Promise<Update<%= singular(classify(name)) %>Output> {
-    return this.<%= singular(lowercased(name)) %>Service.updateOne(input.id, input, user);
+  @Transactional()
+  @Mutation(() => Update<%= classify(singular(name)) %>Output)
+  async update<%= classify(singular(name)) %>(@Args('input') input: Update<%= classify(singular(name)) %>Input): Promise<Update<%= classify(singular(name)) %>Output> {
+    return this.<%= lowercased(singular(name)) %>Service.updateOne(input);
   }
 
-  @Mutation(() => Remove<%= singular(classify(name)) %>Output)
-  async remove<%= singular(classify(name)) %>(
-    @Args('input') input: Remove<%= singular(classify(name)) %>Input,
-  ): Promise<Remove<%= singular(classify(name)) %>Output> {
-    return this.<%= singular(lowercased(name)) %>Service.removeOne(input.id);
+  @Transactional()
+  @Mutation(() => Remove<%= classify(singular(name)) %>Output)
+  async remove<%= classify(singular(name)) %>(@Args('input') input: Remove<%= classify(singular(name)) %>Input): Promise<Remove<%= classify(singular(name)) %>Output> {
+    return this.<%= lowercased(singular(name)) %>Service.removeOne(input.id);
   }
 }

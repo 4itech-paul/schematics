@@ -1,11 +1,7 @@
-<% if (type === 'graphql-code-first') { %>import { Field, ID, InputType } from '@nestjs/graphql';
+import { Field, ID, InputType } from '@nestjs/graphql';
 
 @InputType()
-export class Remove<%= singular(classify(name)) %>Input {
+export class Remove<%= classify(singular(name)) %>Input {
   @Field(() => ID)
   id!: string;
-}<% } else { %>
-
-export class Remove<%= singular(classify(name)) %>Input {
-  id: number;
-}<% } %>
+}

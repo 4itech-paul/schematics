@@ -1,12 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { MainDaoNodePage } from 'apps/main/src/common/main-dao-node-page.type';
 
-import { <%= singular(classify(name)) %> } from '../<%= singular(name) %>.entity';
+import { <%= classify(singular(name)) %> } from '../<%= singular(name) %>.entity';
 
-@ObjectType('<%= singular(classify(name)) %>Page', {
+@ObjectType('<%= classify(singular(name)) %>Page', {
   implements: [MainDaoNodePage],
 })
-export class <%= singular(classify(name)) %>PageType implements MainDaoNodePage<<%= singular(classify(name)) %>> {
-  @Field(() => [<%= singular(classify(name)) %>], { description: 'Nodes in this page' })
-  nodes!: <%= singular(classify(name)) %>[];
+export class <%= classify(singular(name)) %>PageType implements MainDaoNodePage<<%= classify(singular(name)) %>> {
+  @Field(() => [<%= classify(singular(name)) %>], { description: 'Nodes in this page' })
+  nodes!: <%= classify(singular(name)) %>[];
 }
