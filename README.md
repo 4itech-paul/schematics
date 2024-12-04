@@ -17,7 +17,7 @@
 ## Installation
 
 ```bash
-$ npm install -D 4itech-schematics
+$ npm install -D @4itech/schematics
 ```
 
 ## Usage
