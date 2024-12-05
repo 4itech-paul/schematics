@@ -1,4 +1,3 @@
-// user-loader.service.ts
 import { Injectable, Scope } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { Maybe } from 'graphql/jsutils/Maybe';
