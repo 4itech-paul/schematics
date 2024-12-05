@@ -22,7 +22,10 @@ export class <%= classify(singular(name)) %>Service {
 
   @Transactional()
   findPage(args: <%= classify(singular(name)) %>PageArgs) {
-    return this.repo.findNodePage(args);
+    return this.repo.findNodePage({
+      ...args,
+      where: args.where.map((item) => item.toFindOptionsWhere()),
+    });
   }
 
   @Transactional()

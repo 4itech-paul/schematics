@@ -266,7 +266,10 @@ export class Domain0001Service {
 
   @Transactional()
   findPage(args: Domain0001PageArgs) {
-    return this.repo.findNodePage(args);
+    return this.repo.findNodePage({
+      ...args,
+      where: args.where.map((item) => item.toFindOptionsWhere()),
+    });
   }
 
   @Transactional()
