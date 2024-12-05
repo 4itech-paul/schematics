@@ -60,22 +60,19 @@ describe('Domain Factory', () => {
     it('should generate "Domain0001ByIdLoader" class', () => {
       expect(tree.readContent('/domain-0001/domain-0001-by-id.loader.ts'))
         .toEqual(`import { Injectable, Scope } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import DataLoader from 'dataloader';
 import { Maybe } from 'graphql/jsutils/Maybe';
-import { In, Repository } from 'typeorm';
+import { In } from 'typeorm';
 
 import { Domain0001 } from './domain-0001.entity';
+import { Domain0001Repository } from './domain-0001.repository';
 
 @Injectable({ scope: Scope.REQUEST })
 export class Domain0001ByIdLoader extends DataLoader<
   string,
   Maybe<Domain0001>
 > {
-  constructor(
-    @InjectRepository(Domain0001)
-    private readonly repo: Repository<Domain0001>,
-  ) {
+  constructor(private readonly repo: Domain0001Repository) {
     super(async (keys: readonly string[]): Promise<Maybe<Domain0001>[]> => {
       const daoArray = await this.repo.find({
         where: {
@@ -160,19 +157,15 @@ export class Domain0001Module {}
     it('should generate "Domain0001Repository" class', () => {
       expect(tree.readContent('/domain-0001/domain-0001.repository.ts'))
         .toEqual(`import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { BaseRepository } from '../common/base.repository';
 import { Domain0001 } from './domain-0001.entity';
 
 @Injectable()
 export class Domain0001Repository extends BaseRepository<Domain0001> {
-  constructor(
-    @InjectRepository(Domain0001)
-    readonly repo: Repository<Domain0001>,
-  ) {
-    super(repo);
+  constructor(readonly manager: EntityManager) {
+    super(Domain0001, manager);
   }
 }
 `);
