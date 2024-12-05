@@ -25,7 +25,7 @@ export class <%= classify(singular(name)) %>Service {
 
   @Transactional()
   async findByPageArgs(args: <%= classify(singular(name)) %>PageArgs): Promise<<%= classify(singular(name)) %>PageType> {
-    return this.repo.findNodePage({ ...args, where: args.where?.toFindOptionsWhere() });
+    return this.repo.findNodePage({ ...args, where: args.where.toFindOptionsWhere() });
   }
 
   @Transactional()
