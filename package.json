@@ -55,6 +55,7 @@
     "@typescript-eslint/eslint-plugin": "8.17.0",
     "@typescript-eslint/parser": "8.17.0",
     "cpx2": "8.0.0",
+    "dotenv-cli": "^7.4.4",
     "eslint": "9.16.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-import": "2.31.0",
