@@ -8,6 +8,6 @@ import { MetaEntity } from '../common/meta.entity';
 @Entity()
 @ObjectType({ implements: [MetaEntity] })
 export class <%= classify(singular(name)) %> extends MetaEntity {
-  @ColumnField({ type: 'int', nullable: true, comment: '<%= lowercased(singular(name)) %>001' })
-  <%= lowercased(singular(name)) %>001?: Maybe<number>;
+  @ColumnField({ type: 'int', nullable: true, comment: '<%= lowercased(singular(name)) %>01' })
+  <%= lowercased(singular(name)) %>01?: Maybe<number>;
 }

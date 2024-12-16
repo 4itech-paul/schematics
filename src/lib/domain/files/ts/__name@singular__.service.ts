@@ -15,7 +15,8 @@ export class <%= classify(singular(name)) %>Service {
   async saveOne(
     input: Create<%= classify(singular(name)) %>Input | Update<%= classify(singular(name)) %>Input,
   ): Promise<<%= classify(singular(name)) %>> {
-    const <%= lowercased(singular(name)) %> = await this.repo.save(input);
+    const <%= lowercased(singular(name)) %> = this.repo.create(input);
+    await this.repo.save(<%= lowercased(singular(name)) %>);
 
     return <%= lowercased(singular(name)) %>;
   }

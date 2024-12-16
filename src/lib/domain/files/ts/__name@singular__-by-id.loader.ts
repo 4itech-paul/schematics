@@ -7,10 +7,7 @@ import { <%= classify(singular(name)) %> } from './<%= singular(name) %>.entity'
 import { <%= classify(singular(name)) %>Repository } from './<%= singular(name) %>.repository';
 
 @Injectable({ scope: Scope.REQUEST })
-export class <%= classify(singular(name)) %>ByIdLoader extends DataLoader<
-  string,
-  Maybe<<%= classify(singular(name)) %>>
-> {
+export class <%= classify(singular(name)) %>ByIdLoader extends DataLoader<string, Maybe<<%= classify(singular(name)) %>>> {
   constructor(private readonly repo: <%= classify(singular(name)) %>Repository) {
     super(async (keys: readonly string[]): Promise<Maybe<<%= classify(singular(name)) %>>[]> => {
       const daoArray = await this.repo.find({

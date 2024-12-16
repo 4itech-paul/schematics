@@ -36,15 +36,15 @@ $ npm install -D @4itech/schematics
 
 2. Search (with Match Case & include files)
 
-   - replace domain-0001 to <%= singular(name) %>
-   - replace Domain0001 to <%= classify(singular(name)) %>
-   - replace domain0001 to <%= lowercased(singular(name)) %>
+   - replace domain-01 to <%= singular(name) %>
+   - replace Domain01 to <%= classify(singular(name)) %>
+   - replace domain01 to <%= lowercased(singular(name)) %>
 
 2. Loader: Search (with Match Case & include files)
 
-   - replace domain-0002s-by-domain-0001-id to <%= name %>
-   - replace Domain0002sByDomain0001Id to <%= classify(name) %>
-   - replace domain-0002 to <%= singular(entities) %>
-   - replace Domain0002 to <%= classify(singular(entities)) %>
-   - replace domain0002 to <%= lowercased(singular(entities)) %>
-   - replace domain0001Id to <%= lowercased(by) %>
+   - replace domain-02s-by-domain-01-id to <%= name %>
+   - replace Domain02sByDomain01Id to <%= classify(name) %>
+   - replace domain-02 to <%= singular(entities) %>
+   - replace Domain02 to <%= classify(singular(entities)) %>
+   - replace domain02 to <%= lowercased(singular(entities)) %>
+   - replace domain01Id to <%= lowercased(by) %>

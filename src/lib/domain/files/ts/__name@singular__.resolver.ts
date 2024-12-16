@@ -1,4 +1,4 @@
-import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 import { Transactional } from 'typeorm-transactional';
 
@@ -13,6 +13,7 @@ import { Update<%= classify(singular(name)) %>Input } from './mutation/update-<%
 import { Update<%= classify(singular(name)) %>Output } from './mutation/update-<%= singular(name) %>.output';
 import { <%= classify(singular(name)) %>PageArgs } from './query/<%= singular(name) %>-page.args';
 import { <%= classify(singular(name)) %>Page } from './query/<%= singular(name) %>-page.type';
+import { <%= classify(singular(name)) %>Args } from './query/<%= singular(name) %>.args';
 
 @Resolver(() => <%= classify(singular(name)) %>)
 export class <%= classify(singular(name)) %>Resolver {
@@ -37,11 +38,11 @@ export class <%= classify(singular(name)) %>Resolver {
   }
 
   @Transactional()
-  @Query(() => <%= classify(singular(name)) %>)
-  <%= lowercased(singular(name)) %>(
-    @Args('id', { type: () => ID }) id: string,
-  ): Promise<Maybe<<%= classify(singular(name)) %>>> {
-    return this.<%= lowercased(singular(name)) %>Repository.findOne({ where: { id } });
+  @Query(() => <%= classify(singular(name)) %>, { nullable: true })
+  <%= lowercased(singular(name)) %>(@Args() args: <%= classify(singular(name)) %>Args): Promise<Maybe<<%= classify(singular(name)) %>>> {
+    return this.<%= lowercased(singular(name)) %>Repository.findOne({
+      where: args.where.map((item) => item?.toFindOptionsWhere()),
+    });
   }
 
   @Transactional()
