@@ -213,9 +213,8 @@ export class UpdateDomain01Input extends PartialType(
     });
 
     it('should generate "create-domain-01.output" class', () => {
-      expect(
-        tree.readContent('/domain-01/output/create-domain-01.output.ts'),
-      ).toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
+      expect(tree.readContent('/domain-01/output/create-domain-01.output.ts'))
+        .toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
 
 import { Domain01 } from '../domain-01.entity';
 
@@ -228,9 +227,8 @@ export class CreateDomain01Output {
     });
 
     it('should generate "remove-domain-01.output" class', () => {
-      expect(
-        tree.readContent('/domain-01/output/remove-domain-01.output.ts'),
-      ).toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
+      expect(tree.readContent('/domain-01/output/remove-domain-01.output.ts'))
+        .toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
 
 import { Domain01 } from '../domain-01.entity';
 
@@ -243,9 +241,8 @@ export class RemoveDomain01Output {
     });
 
     it('should generate "update-domain-01.output" class', () => {
-      expect(
-        tree.readContent('/domain-01/output/update-domain-01.output.ts'),
-      ).toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
+      expect(tree.readContent('/domain-01/output/update-domain-01.output.ts'))
+        .toEqual(`import { Field, ObjectType } from '@nestjs/graphql';
 
 import { Domain01 } from '../domain-01.entity';
 
@@ -293,11 +290,8 @@ export abstract class WithDomain01 {
     });
 
     it('should generate "domain-01-by-domain-01-id.loader" class', () => {
-      expect(
-        tree.readContent(
-          '/domain-01/domain-01-by-domain-01-id.loader.ts',
-        ),
-      ).toEqual(`import { Injectable, Scope } from '@nestjs/common';
+      expect(tree.readContent('/domain-01/domain-01-by-domain-01-id.loader.ts'))
+        .toEqual(`import { Injectable, Scope } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { Maybe } from 'graphql/jsutils/Maybe';
 import { In } from 'typeorm';
@@ -402,7 +396,7 @@ export class Domain01Resolver {
   }
 
   @Transactional()
-  @Query(() => Domain01)
+  @Query(() => Domain01, { nullable: true })
   async domain01(@Args('id', { type: () => ID }) id: string): Promise<Maybe<Domain01>> {
     return this.domain01Service.findById(id);
   }

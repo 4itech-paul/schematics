@@ -30,7 +30,7 @@ export class <%= classify(singular(name)) %>Resolver {
   }
 
   @Transactional()
-  @Query(() => <%= classify(singular(name)) %>)
+  @Query(() => <%= classify(singular(name)) %>, { nullable: true })
   async <%= lowercased(singular(name)) %>(@Args('id', { type: () => ID }) id: string): Promise<Maybe<<%= classify(singular(name)) %>>> {
     return this.<%= lowercased(singular(name)) %>Service.findById(id);
   }
